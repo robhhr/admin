@@ -6,7 +6,7 @@ import type {CodeAuthFormProps} from '~/types/admin/forms'
 
 export const CodeAuthForm = ({fingerprint}: CodeAuthFormProps) => {
   return (
-    <div className="flex w-4/5 flex-col bg-silver p-[3px] shadow-window md:w-1/3">
+    <div className="bg-silver shadow-window flex w-full max-w-96 flex-col p-[3px]">
       <TitleBar title="2FA" />
 
       <Form method="post" className="m-2 flex flex-col">
@@ -21,7 +21,7 @@ export const CodeAuthForm = ({fingerprint}: CodeAuthFormProps) => {
           name="fingerprintData"
           value={fingerprint ? JSON.stringify(fingerprint.data) : ''}
         />
-        <label htmlFor="code" className="mb-1.5 font-ms-sans-serif text-xs">
+        <label htmlFor="code" className="font-ms-sans-serif mb-1.5 text-xs">
           code
         </label>
         <InputText name="code" />
@@ -32,4 +32,3 @@ export const CodeAuthForm = ({fingerprint}: CodeAuthFormProps) => {
     </div>
   )
 }
-

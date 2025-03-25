@@ -16,6 +16,7 @@
   --color-text-dark: #fbf1c7;
   --color-color-dark: #fbf1c7;
   --color-silver: #C0C0C0;
+  --color-content: #d2d2d2;
 
   /* shadows */
   --shadow-input: inset -1px -1px #fff, inset 1px 1px grey, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
