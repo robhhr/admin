@@ -10,6 +10,7 @@ import {Button} from '~/components/modules/button'
 import {isUserAuthenticated} from '~/models/auth.server'
 import MetaControls from '~/components/ui/admin/meta'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
+import ControlsProjects from '~/components/admin/controls-projects'
 
 // export const loader = () => {
 //   return {}
@@ -68,7 +69,9 @@ const DashboardProjectsCreate = () => {
 
   return (
     <>
-      <Form method="post" className="mt-4 font-ms-sans-serif text-xs">
+      <ControlsProjects />
+
+      <Form method="post" className="mt-4">
         <input type="hidden" name="action" value="login" />
 
         <div className="flex flex-col">
@@ -97,7 +100,7 @@ const DashboardProjectsCreate = () => {
           <InputText name="title" onChange={handleChange} />
         </div>
 
-        <div className="mb-2.5 mt-2 flex flex-col">
+        <div className="mt-2 mb-2.5 flex flex-col">
           <MarkdownEditor setError={setError} />
         </div>
 
