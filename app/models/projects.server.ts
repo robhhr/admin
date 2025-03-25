@@ -1,6 +1,6 @@
 import {query} from '../../db'
 
-interface Project {
+export interface Project {
   status: string
   title: string
   content: string
@@ -33,6 +33,36 @@ export async function createProject({
     )
   } catch (error) {
     console.error('error inserting print:', error)
+    throw error
+  }
+}
+
+export async function getProjectsDraft() {
+  const sql = `
+    SELECT title, status FROM projects WHERE status = 'draft';
+  `
+
+  try {
+    const projects = await query<Project>(sql)
+
+    return projects
+  } catch (error) {
+    console.error('error getting projects:', error)
+    throw error
+  }
+}
+
+export async function getProjectsPublished() {
+  const sql = `
+    SELECT title, status FROM projects WHERE status = 'publish';
+  `
+
+  try {
+    const projects = await query<Project>(sql)
+
+    return projects
+  } catch (error) {
+    console.error('error getting projects:', error)
     throw error
   }
 }
