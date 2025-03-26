@@ -2,6 +2,8 @@ import {redirect, type LoaderFunctionArgs} from '@remix-run/node'
 import {Outlet} from '@remix-run/react'
 import {cx} from 'class-variance-authority'
 import {Nav} from '~/components/admin/nav'
+import {LogoutButton} from '~/components/modules/logout-button'
+import {ToggleTheme} from '~/components/modules/toggle-theme'
 import {isUserAuthenticated} from '~/models/auth.server'
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
@@ -16,27 +18,32 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 
 const AdminLayout = () => {
   return (
-    <div
-      className={cx(
-        'font-ms-sans-serif relative h-full min-h-screen text-xs',
-        'bg-silver text-default',
-        'dark:bg-background-admin-dark dark:text-color-dark',
-      )}
-    >
-      <div className="mx-auto w-4/5 py-64">
-        <Nav />
+    <>
+      <ToggleTheme />
+      <LogoutButton />
 
-        <div
-          className={cx(
-            'min-w-[400px] px-2 py-4',
-            'bg-silver shadow-window',
-            'dark:bg-background-admin-dark',
-          )}
-        >
-          <Outlet />
+      <div
+        className={cx(
+          'font-ms-sans-serif relative h-full min-h-screen text-xs',
+          'bg-silver text-default',
+          'dark:bg-background-admin-dark dark:text-color-dark',
+        )}
+      >
+        <div className="mx-auto w-4/5 py-64">
+          <Nav />
+
+          <div
+            className={cx(
+              'min-w-[400px] px-2 py-4',
+              'bg-silver shadow-window',
+              'dark:bg-background-admin-dark',
+            )}
+          >
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

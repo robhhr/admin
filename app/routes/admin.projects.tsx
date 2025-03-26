@@ -1,4 +1,3 @@
-import {ToggleTheme} from '~/components/modules/toggle-theme'
 import ControlsProjects from '~/components/admin/controls-projects'
 import {
   getProjectsDraft,
@@ -18,7 +17,6 @@ const DashboardProjects = () => {
 
   return (
     <>
-      <ToggleTheme />
       <ControlsProjects />
 
       {projectsDraft && projectsDraft.length > 0 && (
