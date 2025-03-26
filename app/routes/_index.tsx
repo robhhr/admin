@@ -16,7 +16,7 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
     return redirect('/login')
   }
 
-  return {}
+  return redirect('/admin')
 }
 
 export default function Index() {
