@@ -5,7 +5,7 @@ const button = cva('button w-fit', {
   variants: {
     intent: {
       admin: [
-        'bg-silver text-shadow-button text-xs min-h-[1.4375rem] px-3 shadow-button-admin',
+        'bg-silver text-shadow-button text-xs min-h-[1.4375rem] px-3 shadow-button-admin cursor-pointer',
         'focus:outline-1 focus:outline-dotted focus:ring-black focus:-outline-offset-4',
         'active:shadow-button-admin-pressed',
       ],
@@ -42,7 +42,7 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseClasses = button({ intent, disabled })
+  const baseClasses = button({intent, disabled})
   const linkClasses = cx(baseClasses, 'py-1', className)
   const buttonClasses = cx(baseClasses, className)
 

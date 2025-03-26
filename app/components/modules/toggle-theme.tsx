@@ -5,7 +5,7 @@ import {toggleTheme} from '~/utils/toggle-theme'
 export const ToggleThemeComponent = () => {
   const contraintsRef = useRef(null)
   return (
-    <div className="absolute overflow-hidden right-4 top-4 h-24 w-24 text-color dark:text-color-dark" ref={contraintsRef}>
+    <div className="absolute overflow-hidden right-4 top-4 h-24 w-24 text-color dark:text-color-dark z-10" ref={contraintsRef}>
       <motion.button
         className="h-8 w-8"
         drag="y"
