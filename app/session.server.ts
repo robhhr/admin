@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import {createCookie, createCookieSessionStorage} from '@remix-run/node'
-=======
 import {createCookie, createCookieSessionStorage} from 'react-router'
->>>>>>> router
 
 const Max_Age = 3600
 
@@ -17,17 +13,10 @@ type SessionFlashData = {
   error: string
 }
 
-<<<<<<< HEAD
-const sessionSecret = process.env.SESSION_SECRET;
-
-if (!sessionSecret) {
-  throw new Error("SESSION_SECRET must be set in your environment variables");
-=======
 const sessionSecret = process.env.SESSION_SECRET
 
 if (!sessionSecret) {
   throw new Error('SESSION_SECRET must be set in your environment variables')
->>>>>>> router
 }
 
 export const sessionCookie = createCookie('_session', {
@@ -46,9 +35,4 @@ const {getSession, commitSession, destroySession} = createCookieSessionStorage<
   cookie: sessionCookie,
 })
 
-<<<<<<< HEAD
-export { getSession, commitSession, destroySession };
-
-=======
 export {getSession, commitSession, destroySession}
->>>>>>> router

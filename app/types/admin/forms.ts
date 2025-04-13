@@ -8,4 +8,3 @@ export type LoginFormProps = {
 }
 
 export type CodeAuthFormProps = Pick<LoginFormProps, 'fingerprint'>
-

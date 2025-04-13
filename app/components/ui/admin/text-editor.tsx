@@ -1,11 +1,11 @@
-import {lazy, Suspense, useCallback, useEffect, useState} from 'react'
-import {markdown, markdownLanguage} from '@codemirror/lang-markdown'
-import {createTheme} from '@uiw/codemirror-themes'
-import {languages} from '@codemirror/language-data'
-import {vim} from '@replit/codemirror-vim'
-import {tags as t} from '@lezer/highlight'
+import {Suspense, lazy, useCallback, useEffect, useState} from 'react'
 import Markdown from 'react-markdown'
+import {markdown, markdownLanguage} from '@codemirror/lang-markdown'
+import {languages} from '@codemirror/language-data'
 import type {Extension} from '@codemirror/state'
+import {tags as t} from '@lezer/highlight'
+import {vim} from '@replit/codemirror-vim'
+import {createTheme} from '@uiw/codemirror-themes'
 import {Button} from '~/components/modules/button'
 
 const CodeMirror = lazy(() => import('@uiw/react-codemirror'))
@@ -144,7 +144,7 @@ const MarkdownEditor = ({
 
       <input type="hidden" name="content" value={content} />
       {toggleMarkdown ? (
-        <div className="prose max-w-none p-2 shadow-input">
+        <div className="prose shadow-input max-w-none p-2">
           <Markdown>{content}</Markdown>
         </div>
       ) : (

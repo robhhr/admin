@@ -2,7 +2,7 @@ import {query} from '../../db'
 
 export async function checkIFingerprintExists({
   userId,
-  hash
+  hash,
 }: {
   userId: string
   hash: string
@@ -29,4 +29,3 @@ export async function checkIFingerprintExists({
     )
   }
 }
-

@@ -15,15 +15,25 @@
   --color-text: #282828;
   --color-text-dark: #fbf1c7;
   --color-color-dark: #fbf1c7;
-  --color-silver: #C0C0C0;
+  --color-silver: #c0c0c0;
   --color-content: #d2d2d2;
 
   /* shadows */
-  --shadow-input: inset -1px -1px #fff, inset 1px 1px grey, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
-  --shadow-button-admin: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
-  --shadow-button-admin-pressed: inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
-  --shadow-nav: inset -1px 0 #0a0a0a, inset 1px 1px #dfdfdf, inset -2px 0 grey, inset 2px 2px #fff;
-  --shadow-window: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff;
+  --shadow-input:
+    inset -1px -1px #fff, inset 1px 1px grey, inset -2px -2px #dfdfdf,
+    inset 2px 2px #0a0a0a;
+  --shadow-button-admin:
+    inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey,
+    inset 2px 2px #dfdfdf;
+  --shadow-button-admin-pressed:
+    inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf,
+    inset 2px 2px #808080;
+  --shadow-nav:
+    inset -1px 0 #0a0a0a, inset 1px 1px #dfdfdf, inset -2px 0 grey,
+    inset 2px 2px #fff;
+  --shadow-window:
+    inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey,
+    inset 2px 2px #fff;
 }
 
 @layer base {
@@ -32,7 +42,8 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url(/assets/fonts/MSSansSerif.woff) format('woff'),
+    src:
+      url(/assets/fonts/MSSansSerif.woff) format('woff'),
       url(/assets/fonts/MSSansSeris.woff2) format('woff2');
   }
 
@@ -44,7 +55,6 @@
 }
 
 @layer utilities {
-
   /* backgrounds */
   .bg-title-bar {
     background-image: linear-gradient(90deg, navy, #1084d0);

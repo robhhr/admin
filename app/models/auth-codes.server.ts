@@ -48,15 +48,15 @@ export async function checkIfCodeMatches({
     }
 
     for (const result of results) {
-      const matches = await bcrypt.compare(code, result.hashed_code ?? '');
+      const matches = await bcrypt.compare(code, result.hashed_code ?? '')
 
       if (matches) {
         await query(
           `UPDATE two_factor_codes SET expired = true WHERE id = $1`,
-          [result.id]
-        );
+          [result.id],
+        )
 
-        return true;
+        return true
       }
     }
 
@@ -68,4 +68,3 @@ export async function checkIfCodeMatches({
     )
   }
 }
-

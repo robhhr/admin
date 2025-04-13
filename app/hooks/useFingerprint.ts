@@ -67,4 +67,3 @@ const useFingerprint = () => {
 }
 
 export default useFingerprint
-

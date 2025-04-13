@@ -1,16 +1,19 @@
+import {memo, useRef} from 'react'
 import {motion} from 'motion/react'
-import { memo, useRef } from 'react'
 import {toggleTheme} from '~/utils/toggle-theme'
 
 export const ToggleThemeComponent = () => {
   const contraintsRef = useRef(null)
   return (
-    <div className="absolute overflow-hidden right-4 top-4 h-24 w-24 text-color dark:text-color-dark z-10" ref={contraintsRef}>
+    <div
+      className="text-color dark:text-color-dark absolute top-4 right-4 z-10 h-24 w-24 overflow-hidden"
+      ref={contraintsRef}
+    >
       <motion.button
         className="h-8 w-8"
         drag="y"
         dragConstraints={{top: 0, bottom: 50}}
-        dragElastic={.2}
+        dragElastic={0.2}
         onClick={() => toggleTheme()}
       >
         <motion.svg

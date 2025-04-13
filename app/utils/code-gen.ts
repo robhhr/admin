@@ -27,4 +27,3 @@ export const generateHashCode = async () => {
 
   return {code, hash}
 }
-

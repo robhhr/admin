@@ -1,6 +1,6 @@
+import {useEffect, useState} from 'react'
 import {AnimatePresence, motion} from 'framer-motion'
 import {TitleBar} from './title-bar'
-import {useEffect, useState} from 'react'
 
 export const FeedbackDialog = ({
   actionData,
@@ -43,7 +43,7 @@ export const FeedbackDialog = ({
               setVisible(false)
             }
           }}
-          className="absolute bottom-10 right-10 z-50 flex flex-col items-center justify-center bg-silver p-[3px] shadow-window"
+          className="bg-silver shadow-window absolute right-10 bottom-10 z-50 flex flex-col items-center justify-center p-[3px]"
         >
           <TitleBar
             className="w-full"
@@ -53,9 +53,7 @@ export const FeedbackDialog = ({
             error={Boolean(actionData?.error)}
           />
 
-          {message && (
-            <p className="m-1 text-xs">{message}</p>
-          )}
+          {message && <p className="m-1 text-xs">{message}</p>}
         </motion.div>
       )}
     </AnimatePresence>

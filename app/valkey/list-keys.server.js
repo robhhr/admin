@@ -1,5 +1,6 @@
-import {createClient} from 'redis'
 import Table from 'cli-table3'
+import {createClient} from 'redis'
+
 const table = new Table({head: ['Key', 'Value']})
 
 ;(async () => {
@@ -15,4 +16,3 @@ const table = new Table({head: ['Key', 'Value']})
   console.log(table.toString())
   await client.quit()
 })()
-

@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer'
-import { generateHashCode } from './code-gen'
+import {generateHashCode} from './code-gen'
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -55,7 +55,7 @@ export async function sendCodeEmail(code: string) {
       throw new Error('failed to send email')
     }
   }
-} 
+}
 
 // export async function sendPasswordResetEmail(to: string, token: string) {
 //   try {
@@ -72,4 +72,3 @@ export async function sendCodeEmail(code: string) {
 //     throw new Error('Failed to send email')
 //   }
 // }
-

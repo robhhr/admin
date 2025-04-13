@@ -7,11 +7,10 @@ export const InputText: React.FC<InputTextProps> = ({className, ...props}) => {
   return (
     <input
       className={cx(
-        'w-fit max-w-36 bg-white p-1 text-xs shadow-input',
+        'shadow-input w-fit max-w-36 bg-white p-1 text-xs',
         className,
       )}
       {...props}
     />
   )
 }
-

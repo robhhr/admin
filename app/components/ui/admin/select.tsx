@@ -15,7 +15,7 @@ export const Select: React.FC<SelectProps> = ({
   return (
     <select
       className={cx(
-        'w-fit max-w-36 bg-white p-1 text-xs shadow-input',
+        'shadow-input w-fit max-w-36 bg-white p-1 text-xs',
         className,
       )}
       defaultValue={defaultValue}
