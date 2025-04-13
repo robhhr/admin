@@ -1,6 +1,6 @@
-import {MouseEvent, useState} from 'react'
-import {Button} from '~/components/modules/button'
+import {type MouseEvent, useState} from 'react'
 import {InputText} from './input-text'
+import {Button} from '~/components/modules/button'
 
 interface ContentItem {
   label: string
@@ -77,7 +77,11 @@ const MetaControls = () => {
       </Button>
 
       {items.map((item, index) => (
+<<<<<<< HEAD
         <div key={index} className="mb-2 flex flex-col shadow-window p-2">
+=======
+        <div key={index} className="shadow-window mb-2 flex flex-col p-2">
+>>>>>>> router
           <div className="flex items-center space-x-2">
             <InputText
               value={item.label}
@@ -93,18 +97,31 @@ const MetaControls = () => {
             <div className="flex">
               <Button
                 onClick={toggleAdditional(index)}
+<<<<<<< HEAD
                 className="h-fit mt-1.5"
+=======
+                className="mt-1.5 h-fit"
+>>>>>>> router
               >
                 {item.showAdditional ? 'remove subitems' : 'add subitem opt'}
               </Button>
 
               {item.showAdditional && (
+<<<<<<< HEAD
               <Button
                 onClick={addSubItem(index)}
                 className="h-fit ml-2 mt-1.5"
               >
                 add sub-item
               </Button>
+=======
+                <Button
+                  onClick={addSubItem(index)}
+                  className="mt-1.5 ml-2 h-fit"
+                >
+                  add sub-item
+                </Button>
+>>>>>>> router
               )}
             </div>
           </div>
@@ -113,7 +130,11 @@ const MetaControls = () => {
 
           {item.showAdditional && (
             <div className="flex">
+<<<<<<< HEAD
               <div className="ml-[152px] mt-2 flex flex-col">
+=======
+              <div className="mt-2 ml-[152px] flex flex-col">
+>>>>>>> router
                 {item.additionalValues.map((subValue, subIndex) => (
                   <div
                     key={subIndex}

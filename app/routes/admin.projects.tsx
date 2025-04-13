@@ -1,10 +1,10 @@
+import {useLoaderData} from 'react-router'
 import ControlsProjects from '~/components/admin/controls-projects'
 import {
+  type Project,
   getProjectsDraft,
   getProjectsPublished,
-  Project,
 } from '~/models/projects.server'
-import {useLoaderData} from '@remix-run/react'
 
 export const loader = async () => {
   const projectsDraft = await getProjectsDraft()

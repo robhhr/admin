@@ -1,11 +1,11 @@
-import {NavLink} from '@remix-run/react'
+import {NavLink} from 'react-router'
 
 const Link = ({children, to}: {children: React.ReactNode; to: string}) => {
   return (
     <NavLink
       to={to}
       className={({isActive}) =>
-        `rounded-t-[3px] bg-silver dark:bg-background-admin-dark p-1.5 font-ms-sans-serif text-sm text-default dark:text-color-dark shadow-nav focus:outline-dotted focus:outline-1 focus:-outline-offset-4 focus:ring-black ${isActive && '-ml-[3px] -mt-0.5 pt-2.5 focus:outline-none'}`
+        `bg-silver dark:bg-background-admin-dark font-ms-sans-serif text-default dark:text-color-dark shadow-nav rounded-t-[3px] p-1.5 text-sm focus:ring-black focus:outline-1 focus:-outline-offset-4 focus:outline-dotted ${isActive && '-mt-0.5 -ml-[3px] pt-2.5 focus:outline-none'}`
       }
     >
       {children}

@@ -1,11 +1,15 @@
-import {type LoaderFunctionArgs, MetaFunction, redirect} from '@remix-run/node'
-import {isUserAuthenticated} from '~/models/auth.server'
+import {
+  type LoaderFunctionArgs,
+  type MetaFunction,
+  redirect,
+} from 'react-router'
 import {LogoutButton} from '~/components/modules/logout-button'
+import {isUserAuthenticated} from '~/models/auth.server'
 
 export const meta: MetaFunction = () => {
   return [
-    {title: 'New Remix App'},
-    {name: 'description', content: 'Welcome to Remix!'},
+    {title: 'admin-robhhr'},
+    {name: 'description', content: 'admin-robhhr'},
   ]
 }
 

@@ -1,5 +1,5 @@
-import {Link} from '@remix-run/react'
-import {cva, cx, type VariantProps} from 'class-variance-authority'
+import {Link} from 'react-router'
+import {type VariantProps, cva, cx} from 'class-variance-authority'
 
 const button = cva('button w-fit', {
   variants: {

@@ -1,4 +1,4 @@
-import {Form} from '@remix-run/react'
+import {Form} from 'react-router'
 import {Button} from '~/components/modules/button'
 import {InputText} from '~/components/ui/admin/input-text'
 import {TitleBar} from '~/components/ui/admin/title-bar'

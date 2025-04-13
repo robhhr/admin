@@ -1,27 +1,28 @@
 import {useEffect, useState} from 'react'
-import {Form, useActionData, useNavigation} from '@remix-run/react'
-import {InputText} from '~/components/ui/admin/input-text'
-import {Select} from '~/components/ui/admin/select'
-import type {CreateProjectFormProps} from '~/types/admin/forms'
-import MarkdownEditor from '~/components/ui/admin/text-editor'
-import {redirect, type ActionFunctionArgs} from '@remix-run/node'
-import {createProject} from '~/models/projects.server'
-import {Button} from '~/components/modules/button'
-import {isUserAuthenticated} from '~/models/auth.server'
-import MetaControls from '~/components/ui/admin/meta'
-import {FeedbackDialog} from '~/components/ui/admin/dialog'
+import {
+  type ActionFunctionArgs,
+  Form,
+  redirect,
+  useActionData,
+  useNavigation,
+} from 'react-router'
 import ControlsProjects from '~/components/admin/controls-projects'
-
-// export const loader = () => {
-//   return {}
-// }
+import {Button} from '~/components/modules/button'
+import {FeedbackDialog} from '~/components/ui/admin/dialog'
+import {InputText} from '~/components/ui/admin/input-text'
+import MetaControls from '~/components/ui/admin/meta'
+import {Select} from '~/components/ui/admin/select'
+import MarkdownEditor from '~/components/ui/admin/text-editor'
+import {isUserAuthenticated} from '~/models/auth.server'
+import {createProject} from '~/models/projects.server'
+// import type {CreateProjectFormProps} from '~/types/admin/forms'
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
 
-  // if (!isAuth) {
-  //   return redirect('/login')
-  // }
+  if (!isAuth) {
+    return redirect('/login')
+  }
 
   const body = await request.formData()
   const status = body.get('status') as string

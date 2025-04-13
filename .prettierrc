@@ -13,6 +13,23 @@
   "trailingComma": "all",
   "useTabs": false,
   "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss"
-  ]
+  ],
+  "importOrder": [
+    "^react",
+    "^react-router",
+    "^framer-motion",
+    "^tailwind-merge",
+    "^clsx",
+    "<THIRD_PARTY_MODULES>",
+    "^@/models/(.*)$",
+    "^@/components/(.*)$",
+    "^@/utils/(.*)$",
+    "^./hooks/(.*)$",
+    "^./(.*)$",
+    "^./assets/(.*)$"
+  ],
+  "importOrderSeparation": false,
+  "importOrderSortSpecifiers": true
 }

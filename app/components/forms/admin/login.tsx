@@ -1,5 +1,5 @@
-import {Form} from '@remix-run/react'
 import {useState} from 'react'
+import {Form} from 'react-router'
 import {cx} from 'class-variance-authority'
 import {IconCheckmark} from '~/components/icons/checkmark'
 import {IconEye, IconEyeClose} from '~/components/icons/eye'
@@ -27,20 +27,20 @@ export const LoginForm = ({
   }
 
   return (
-    <div className="flex w-full max-w-96 flex-col bg-silver p-[3px] shadow-window">
+    <div className="bg-silver shadow-window flex w-full max-w-96 flex-col p-[3px]">
       <TitleBar title="admin" />
 
       <Form method="post" className="m-2">
         <input type="hidden" name="action" value="login" />
 
-        <div className="flex flex-col font-ms-sans-serif text-xs">
+        <div className="font-ms-sans-serif flex flex-col text-xs">
           <label htmlFor="username" className="mb-1.5">
             username
           </label>
           <InputText name="username" onChange={onChange} />
         </div>
 
-        <div className="mt-2 flex flex-col font-ms-sans-serif text-xs">
+        <div className="font-ms-sans-serif mt-2 flex flex-col text-xs">
           <label htmlFor="password" className="mb-1.5">
             password
           </label>
@@ -55,7 +55,7 @@ export const LoginForm = ({
 
             <span
               aria-hidden
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 cursor-pointer"
+              className="absolute top-1/2 right-1.5 -translate-y-1/2 cursor-pointer"
               onClick={e => {
                 e.preventDefault()
                 togglePasswordVisibility()
@@ -77,13 +77,13 @@ export const LoginForm = ({
           value={fingerprint ? JSON.stringify(fingerprint.data) : ''}
         />
 
-        <div className="my-2.5 flex items-center font-ms-sans-serif text-xs">
+        <div className="font-ms-sans-serif my-2.5 flex items-center text-xs">
           <button
             type="button"
             aria-label="remember me"
             onClick={handleRememberToggle}
             className={cx(
-              'flex h-3.5 w-3.5 cursor-pointer items-center justify-center shadow-input',
+              'shadow-input flex h-3.5 w-3.5 cursor-pointer items-center justify-center',
               'inset-input bg-white',
             )}
           >

@@ -1,5 +1,8 @@
-import {ActionFunctionArgs, LoaderFunctionArgs} from '@remix-run/node'
-import {redirect} from '@remix-run/react'
+import {
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+  redirect,
+} from 'react-router'
 import {destroySession, getSession} from '~/session.server'
 import {destroyValkeySession} from '~/valkey/valkey.server'
 
@@ -33,4 +36,3 @@ export const action = async ({request}: ActionFunctionArgs) => {
 export const Logout = () => {
   return null
 }
-

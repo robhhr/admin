@@ -1,5 +1,4 @@
-import {redirect, type LoaderFunctionArgs} from '@remix-run/node'
-import {Outlet} from '@remix-run/react'
+import {type LoaderFunctionArgs, Outlet, redirect} from 'react-router'
 import {cx} from 'class-variance-authority'
 import {Nav} from '~/components/admin/nav'
 import {LogoutButton} from '~/components/modules/logout-button'

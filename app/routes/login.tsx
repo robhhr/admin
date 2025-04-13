@@ -1,31 +1,32 @@
 import {useEffect, useState} from 'react'
+// import { ToggleTheme } from '~/components/modules/toggle-theme'
 import {
-  data,
-  redirect,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
-} from '@remix-run/node'
-import {useActionData, useLoaderData} from '@remix-run/react'
-import {commitSession, getSession} from '~/session.server'
+  data,
+  redirect,
+  useActionData,
+  useLoaderData,
+} from 'react-router'
+import useFingerprint from '~/hooks/useFingerprint'
+import {CodeAuthForm} from '~/components/forms/admin/code-auth'
+import {LoginForm} from '~/components/forms/admin/login'
+import {FeedbackDialog} from '~/components/ui/admin/dialog'
+import {
+  checkIfCodeMatches,
+  insertTwoFactorCode,
+} from '~/models/auth-codes.server'
 import {
   createUserSession,
   insertFingerprint,
   isUserAuthenticated,
   login,
 } from '~/models/auth.server'
-import {
-  checkIfCodeMatches,
-  insertTwoFactorCode,
-} from '~/models/auth-codes.server'
-import {createValkeySession} from '~/valkey/valkey.server'
 import {checkIFingerprintExists} from '~/models/session.server'
+import {commitSession, getSession} from '~/session.server'
 import {generateHashCode} from '~/utils/code-gen'
 import {sendCodeEmail} from '~/utils/mailer'
-import {LoginForm} from '~/components/forms/admin/login'
-import {CodeAuthForm} from '~/components/forms/admin/code-auth'
-import {FeedbackDialog} from '~/components/ui/admin/dialog'
-import useFingerprint from '~/hooks/useFingerprint'
-import { ToggleTheme } from '~/components/modules/toggle-theme'
+import {createValkeySession} from '~/valkey/valkey.server'
 
 enum AuthState {
   IDLE = 'idle',
@@ -243,8 +244,7 @@ const Login = () => {
   const handleChange = () => setError(null)
 
   return (
-    <div className="relative mx-auto flex h-screen min-h-96 w-full items-center justify-center bg-silver">
-
+    <div className="bg-silver relative mx-auto flex h-screen min-h-96 w-full items-center justify-center">
       {actionData?.authState === AuthState.TWO_FACTOR ? (
         <CodeAuthForm fingerprint={fingerprint || undefined} />
       ) : (
