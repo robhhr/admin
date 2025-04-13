@@ -13,9 +13,9 @@ interface ValkeySession {
 }
 
 export const valkeyClient = new Valkey({
-  port: Number(process.env.REDIS_PORT) || 6379,
-  host: process.env.REDIS_HOST || '127.0.0.1',
-  password: process.env.REDIS_PASS,
+  port: Number(process.env.REDIS_PORT) || 6380,
+  host: process.env.REDIS_HOST || 'localhost',
+  password: process.env.REDIS_PASS || 'svp3rs3cr3t',
   tls: process.env.REDIS_HOST ? {} : undefined
 })
 
