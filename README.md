@@ -2,4 +2,11 @@
 
 ##### admin
 
-admin section to create content on personal site
+content management for [personal site](https://github.com/robhhr/robhhr)
+
+###### tech
+
+- Postgres
+- Redis
+- React Router
+- Tailwind
