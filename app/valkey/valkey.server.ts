@@ -17,7 +17,7 @@ export const valkeyClient = new Valkey({
   host: process.env.REDIS_HOST || 'localhost',
   password: process.env.REDIS_PASS || 'svp3rs3cr3t',
   tls: process.env.REDIS_TLS === 'true' ? {} : undefined,
-  family: 0
+  family: 0,
 })
 
 export const createValkeySession = async ({
