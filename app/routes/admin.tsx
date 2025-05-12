@@ -4,6 +4,7 @@ import {Nav} from '~/components/admin/nav'
 import {LogoutButton} from '~/components/modules/logout-button'
 import {ToggleTheme} from '~/components/modules/toggle-theme'
 import {isUserAuthenticated} from '~/models/auth.server'
+import {refreshSessionTTL} from '~/valkey/valkey.server'
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
@@ -12,7 +13,7 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
     return redirect('/login')
   }
 
-  return {}
+  return await refreshSessionTTL(request)
 }
 
 const AdminLayout = () => {
