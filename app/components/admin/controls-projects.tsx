@@ -1,7 +1,7 @@
 import {useLocation} from 'react-router'
 import {Button} from '../modules/button'
 
-const ControlsProjects = () => {
+export const ControlsProjects = () => {
   const location = useLocation()
 
   return (
@@ -25,5 +25,3 @@ const ControlsProjects = () => {
     </ul>
   )
 }
-
-export default ControlsProjects

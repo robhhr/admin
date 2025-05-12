@@ -6,7 +6,7 @@ import {
   useActionData,
   useNavigation,
 } from 'react-router'
-import ControlsProjects from '~/components/admin/controls-projects'
+import {ControlsProjects} from '~/components/admin'
 import {Button} from '~/components/modules/button'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {InputText} from '~/components/ui/admin/input-text'
