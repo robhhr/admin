@@ -1,6 +1,7 @@
 import {query} from '../../db'
 
 export interface Project {
+  id: string
   status: string
   title: string
   content: string
@@ -39,7 +40,7 @@ export async function createProject({
 
 export async function getProjectsDraft() {
   const sql = `
-    SELECT title, status FROM projects WHERE status = 'draft';
+    SELECT id, title, status FROM projects WHERE status = 'draft';
   `
 
   try {
@@ -54,7 +55,7 @@ export async function getProjectsDraft() {
 
 export async function getProjectsPublished() {
   const sql = `
-    SELECT title, status FROM projects WHERE status = 'publish';
+    SELECT id, title, status FROM projects WHERE status = 'publish';
   `
 
   try {
