@@ -195,7 +195,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
           sessionToken,
         )
 
-        return redirect('/admin', {
+        return redirect('/admin/projects', {
           headers: {
             'Set-Cookie': createSession,
           },
