@@ -1,16 +1,13 @@
 import {useEffect, useState} from 'react'
-// import { ToggleTheme } from '~/components/modules/toggle-theme'
 import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
   data,
   redirect,
   useActionData,
-  useLoaderData,
 } from 'react-router'
 import useFingerprint from '~/hooks/useFingerprint'
-import {CodeAuthForm} from '~/components/forms/admin/code-auth'
-import {LoginForm} from '~/components/forms/admin/login'
+import {CodeAuthForm, LoginForm} from '~/components/forms/admin'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {
   checkIfCodeMatches,
@@ -24,8 +21,7 @@ import {
 } from '~/models/auth.server'
 import {checkIFingerprintExists} from '~/models/session.server'
 import {commitSession, getSession} from '~/session.server'
-import {generateHashCode} from '~/utils/code-gen'
-import {sendCodeEmail} from '~/utils/mailer'
+import {generateHashCode, sendCodeEmail} from '~/utils'
 import {createValkeySession} from '~/valkey/valkey.server'
 
 enum AuthState {
@@ -38,11 +34,6 @@ enum AuthState {
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
-  const session = await getSession(request.headers.get('Cookie'))
-
-  console.log(isAuth, 'loader isAuth')
-  console.log(session.get('userId'), 'loader userid')
-  console.log(session.get('sessionToken'), 'loader token valkey')
 
   if (isAuth) {
     return redirect('/admin')
@@ -102,7 +93,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
             isActive: true,
           })
 
-          return redirect('/admin', {
+          return redirect('/admin/projects', {
             headers: {
               'Set-Cookie': await commitSession(session),
             },
@@ -214,7 +205,6 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
 const Login = () => {
   const actionData = useActionData<typeof action>()
-  const loaderData = useLoaderData<typeof loader>()
   const {fingerprint, generateFingerprint} = useFingerprint()
   const [remember, setRemember] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -223,9 +213,6 @@ const Login = () => {
     setError(null)
     setRemember(!remember)
   }
-
-  console.log(actionData, ' actionData')
-  console.log(loaderData, ' loaderData')
 
   useEffect(() => {
     const fetchFingerprint = async () => {
