@@ -67,3 +67,19 @@ export async function getProjectsPublished() {
     throw error
   }
 }
+
+export async function deleteProject({id}: Pick<Project, 'id'>) {
+  const sql = `
+    DELETE FROM projects WHERE id = $1;
+    VALUES ($1)
+  `
+
+  try {
+    const result = await query<Project>(sql, [id])
+
+    console.log(`deleted project record: ${JSON.stringify(result)}`)
+  } catch (error) {
+    console.error('error deleting project:', error)
+    throw error
+  }
+}
