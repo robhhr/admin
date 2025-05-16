@@ -1,18 +1,33 @@
-import {useLoaderData} from 'react-router'
+import {type ActionFunctionArgs, useLoaderData} from 'react-router'
 import {ControlsProjects, ProjectListing} from '~/components/admin'
-import {getProjectsDraft, getProjectsPublished} from '~/models/projects.server'
+import {archiveProject, getProjectsByStatus} from '~/models/projects.server'
+
+export const action = async ({request}: ActionFunctionArgs) => {
+  const formData = await request.formData()
+  const intent = formData.get('intent')
+  const projectId = formData.get('projectId') as string
+
+  if (!projectId) return {error: 'project id required'}
+
+  if (intent === 'archive') {
+    await archiveProject({id: projectId})
+  }
+}
 
 export const loader = async () => {
-  const [projectsPublished, projectsDraft] = await Promise.all([
-    getProjectsPublished(),
-    getProjectsDraft(),
-  ])
+  const [projectsPublished, projectsDraft, projectsArchived] =
+    await Promise.all([
+      getProjectsByStatus({status: 'publish'}),
+      getProjectsByStatus({status: 'draft'}),
+      getProjectsByStatus({status: 'archive'}),
+    ])
 
-  return {projectsDraft, projectsPublished}
+  return {projectsArchived, projectsDraft, projectsPublished}
 }
 
 const DashboardProjects = () => {
-  const {projectsDraft, projectsPublished} = useLoaderData<typeof loader>()
+  const {projectsArchived, projectsDraft, projectsPublished} =
+    useLoaderData<typeof loader>()
 
   return (
     <>
@@ -24,6 +39,10 @@ const DashboardProjects = () => {
 
       {projectsPublished && projectsPublished.length > 0 && (
         <ProjectListing title="published" data={projectsPublished} />
+      )}
+
+      {projectsArchived && projectsArchived.length > 0 && (
+        <ProjectListing title="archive" data={projectsArchived} />
       )}
     </>
   )

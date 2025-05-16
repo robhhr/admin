@@ -1,8 +1,12 @@
 import {query} from '../../db'
 
+interface Status {
+  status: 'draft' | 'publish' | 'archive'
+}
+
 export interface Project {
   id: string
-  status: 'draft' | 'publish' | 'archive'
+  status: Status['status']
   title: string
   content: string
   meta: string
@@ -38,28 +42,17 @@ export async function createProject({
   }
 }
 
-export async function getProjectsDraft() {
+export async function getProjectsByStatus({
+  status,
+}: {
+  status: Project['status']
+}) {
   const sql = `
-    SELECT id, title, status FROM projects WHERE status = 'draft';
+    SELECT id, title, status FROM projects WHERE status = $1;
   `
 
   try {
-    const projects = await query<Project>(sql)
-
-    return projects
-  } catch (error) {
-    console.error('error getting projects:', error)
-    throw error
-  }
-}
-
-export async function getProjectsPublished() {
-  const sql = `
-    SELECT id, title, status FROM projects WHERE status = 'publish';
-  `
-
-  try {
-    const projects = await query<Project>(sql)
+    const projects = await query<Project>(sql, [status])
 
     return projects
   } catch (error) {
