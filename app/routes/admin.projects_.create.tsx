@@ -26,7 +26,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
   }
 
   const body = await request.formData()
-  const status = body.get('status') as string
+  const status = body.get('status') as 'draft' | 'publish'
   const title = body.get('title') as string
   const content = body.get('content') as string
   const meta = body.get('meta') as string

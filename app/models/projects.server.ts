@@ -13,7 +13,7 @@ export async function createProject({
   title,
   content,
   meta,
-}: Project): Promise<void> {
+}: Omit<Project, 'id'>) {
   const sql = `
     INSERT INTO projects (
       status, 
