@@ -1,25 +1,14 @@
 import {memo, useRef} from 'react'
-import {motion} from 'motion/react'
+import {Button} from './button'
 import {toggleTheme} from '~/utils/toggle-theme'
 
 export const ToggleThemeComponent = () => {
   const contraintsRef = useRef(null)
   return (
-    <div
-      className="text-color dark:text-color-dark absolute top-4 right-4 z-10 h-24 w-24 overflow-hidden"
-      ref={contraintsRef}
-    >
-      <motion.button
-        className="h-8 w-8"
-        drag="y"
-        dragConstraints={{top: 0, bottom: 50}}
-        dragElastic={0.2}
-        onClick={() => toggleTheme()}
-      >
-        <motion.svg
-          className="rotate-180"
-          width="30px"
-          height="30px"
+    <div className="text-color flex dark:text-color-dark mr-2" ref={contraintsRef}>
+      <Button className="!p-0.5" onClick={() => toggleTheme()}>
+        <svg
+          className="h-4 w-4 rotate-180"
           strokeWidth="1.5"
           viewBox="0 0 24 24"
           fill="none"
@@ -83,8 +72,8 @@ export const ToggleThemeComponent = () => {
             strokeLinejoin="round"
             data-darkreader-inline-stroke=""
           ></path>
-        </motion.svg>
-      </motion.button>
+        </svg>
+      </Button>
     </div>
   )
 }

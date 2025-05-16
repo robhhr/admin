@@ -78,7 +78,7 @@ const MetaControls = () => {
 
       {items.map((item, index) => (
         <div key={index} className="shadow-window mb-2 flex flex-col p-2">
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-col space-x-2 md:flex-row md:items-center">
             <InputText
               value={item.label}
               placeholder="key"
@@ -113,7 +113,7 @@ const MetaControls = () => {
 
           {item.showAdditional && (
             <div className="flex">
-              <div className="mt-2 ml-[152px] flex flex-col">
+              <div className="mt-2 flex flex-col sm:ml-[152px]">
                 {item.additionalValues.map((subValue, subIndex) => (
                   <div
                     key={subIndex}
@@ -121,7 +121,7 @@ const MetaControls = () => {
                   >
                     <InputText
                       value={subValue}
-                      placeholder="Additional value"
+                      placeholder="sub value"
                       onChange={e =>
                         updateSubValue(index, subIndex, e.target.value)
                       }

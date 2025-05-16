@@ -1,8 +1,7 @@
 import {type LoaderFunctionArgs, Outlet, redirect} from 'react-router'
 import {cx} from 'class-variance-authority'
 import {Nav} from '~/components/admin/nav'
-import {LogoutButton} from '~/components/modules/logout-button'
-import {ToggleTheme} from '~/components/modules/toggle-theme'
+import {Sidebar} from '~/components/modules'
 import {isUserAuthenticated} from '~/models/auth.server'
 import {refreshSessionTTL} from '~/valkey/valkey.server'
 
@@ -19,22 +18,21 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 const AdminLayout = () => {
   return (
     <>
-      <ToggleTheme />
-      <LogoutButton />
+      <Sidebar />
 
       <div
         className={cx(
-          'font-ms-sans-serif relative h-full min-h-screen text-xs',
+          'font-ms-sans-serif relative flex h-full min-h-screen items-center justify-center text-xs',
           'bg-silver text-default',
           'dark:bg-background-admin-dark dark:text-color-dark',
         )}
       >
-        <div className="mx-auto w-4/5 py-64">
+        <div className="w-full max-w-[680px] p-5 py-20">
           <Nav />
 
           <div
             className={cx(
-              'min-w-[400px] px-2 py-4',
+              'px-2 py-4 md:min-w-[400px]',
               'bg-silver shadow-window',
               'dark:bg-background-admin-dark',
             )}

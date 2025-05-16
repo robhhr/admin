@@ -62,9 +62,17 @@
   /* backgrounds */
   .bg-title-bar {
     background-image: linear-gradient(90deg, navy, #1084d0);
+
+    .dark & {
+      background-image: none;
+    }
   }
 
   .bg-title-bar-error {
     background-image: linear-gradient(90deg, #ff2727, #ff8989);
+  }
+
+  .border-bg-title-bar {
+    border-image: linear-gradient(90deg, navy, #1084d0) 1;
   }
 }
