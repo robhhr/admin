@@ -68,10 +68,11 @@ export async function getProjectsPublished() {
   }
 }
 
-export async function deleteProject({id}: Pick<Project, 'id'>) {
+export async function archiveProject({id}: {id: string}) {
   const sql = `
-    DELETE FROM projects WHERE id = $1;
-    VALUES ($1)
+    UPDATE projects
+    SET status = 'archive'
+    WHERE id = $1
   `
 
   try {
