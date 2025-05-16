@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const ProjectListing = ({title, data}: Props) => {
-  console.log(data)
+  // console.log(data)
   return (
     <>
       <p className="mt-4 ml-1.5 font-bold">{title}</p>

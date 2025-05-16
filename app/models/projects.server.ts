@@ -71,9 +71,26 @@ export async function archiveProject({id}: {id: string}) {
   try {
     const result = await query<Project>(sql, [id])
 
-    console.log(`deleted project record: ${JSON.stringify(result)}`)
+    console.log(`archived project record: ${JSON.stringify(result)}`)
   } catch (error) {
-    console.error('error deleting project:', error)
+    console.error('error archiving project:', error)
+    throw error
+  }
+}
+
+export async function unarchiveProject({id}: {id: string}) {
+  const sql = `
+    UPDATE projects
+    SET status = 'draft'
+    WHERE id = $1
+  `
+
+  try {
+    const result = await query<Project>(sql, [id])
+
+    console.log(`unarchived project record: ${JSON.stringify(result)}`)
+  } catch (error) {
+    console.error('error archiving project:', error)
     throw error
   }
 }

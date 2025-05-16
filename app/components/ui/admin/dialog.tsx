@@ -27,8 +27,6 @@ export const FeedbackDialog = ({
     }
   }, [actionData, message])
 
-  console.log(message, 'message')
-
   return (
     <AnimatePresence>
       {visible && message && (

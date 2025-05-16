@@ -1,16 +1,52 @@
-import {type ActionFunctionArgs, useLoaderData} from 'react-router'
+import {type ActionFunctionArgs, redirect, useLoaderData} from 'react-router'
 import {ControlsProjects, ProjectListing} from '~/components/admin'
-import {archiveProject, getProjectsByStatus} from '~/models/projects.server'
+import {isUserAuthenticated} from '~/models/auth.server'
+import {
+  archiveProject,
+  getProjectsByStatus,
+  unarchiveProject,
+} from '~/models/projects.server'
 
 export const action = async ({request}: ActionFunctionArgs) => {
+  const isAuth = await isUserAuthenticated(request)
+
+  if (!isAuth) {
+    return redirect('/login')
+  }
+
   const formData = await request.formData()
   const intent = formData.get('intent')
   const projectId = formData.get('projectId') as string
 
   if (!projectId) return {error: 'project id required'}
 
-  if (intent === 'archive') {
-    await archiveProject({id: projectId})
+  switch (intent) {
+    case 'archive':
+      try {
+        const result = await archiveProject({id: projectId})
+        return {
+          success: 'project archived',
+          result,
+        }
+      } catch (error) {
+        console.error('error archiving project:', error)
+        return {error: 'error archiving project'}
+      }
+
+    case 'unarchive':
+      try {
+        const result = await unarchiveProject({id: projectId})
+        return {
+          success: 'project unarchived',
+          result,
+        }
+      } catch (error) {
+        console.error('error unarchiving project:', error)
+        return {error: 'error unarchiving project'}
+      }
+
+    default:
+      return {error: 'invalid intent'}
   }
 }
 

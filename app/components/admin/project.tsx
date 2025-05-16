@@ -6,12 +6,22 @@ interface Props {
 }
 
 export const Project = ({data}: Props) => {
-  let fetcher = useFetcher()
+  let archiveFetcher = useFetcher()
+  let unarchiveFetcher = useFetcher()
+
+  const isArchiving =
+    archiveFetcher.state !== 'idle' &&
+    archiveFetcher.formData?.get('intent') === 'archive'
+
+  const isUnarchiving =
+    unarchiveFetcher.state !== 'idle' &&
+    unarchiveFetcher.formData?.get('intent') === 'unarchive'
+
   return (
     <div className="flex flex-col justify-between border-b px-1 py-2 last-of-type:border-0">
       <p>{data.title}</p>
 
-      <div className="flex justify-end mt-2.5">
+      <div className="mt-2.5 flex justify-end">
         <Link
           className="text-edit hover:text-edit/65 transition-colors duration-100"
           to={`/admin/project/${data.id}`}
@@ -20,16 +30,29 @@ export const Project = ({data}: Props) => {
         </Link>
         <span className="mx-1">•</span>
 
-        <fetcher.Form method="post">
-          <input type="hidden" name="projectId" value={data.id} />
-          <input type="hidden" name="intent" value="archive" />
-          <button
-            className="text-delete hover:text-delete/65 cursor-pointer transition-colors duration-100"
-            type="submit"
-          >
-            archive
-          </button>
-        </fetcher.Form>
+        {data.status !== 'archive' ? (
+          <archiveFetcher.Form method="post">
+            <input type="hidden" name="projectId" value={data.id} />
+            <input type="hidden" name="intent" value="archive" />
+            <button
+              className="text-delete hover:text-delete/65 cursor-pointer transition-colors duration-100"
+              type="submit"
+            >
+              {isArchiving ? 'archiving...' : 'archive'}
+            </button>
+          </archiveFetcher.Form>
+        ) : (
+          <unarchiveFetcher.Form method="post">
+            <input type="hidden" name="projectId" value={data.id} />
+            <input type="hidden" name="intent" value="unarchive" />
+            <button
+              className="text-publish hover:text-publish/65 cursor-pointer transition-colors duration-100"
+              type="submit"
+            >
+              {isUnarchiving ? 'unarchiving...' : 'unarchive'}
+            </button>
+          </unarchiveFetcher.Form>
+        )}
       </div>
     </div>
   )
