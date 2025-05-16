@@ -2,7 +2,7 @@ import {query} from '../../db'
 
 export interface Project {
   id: string
-  status: 'draft' | 'publish'
+  status: 'draft' | 'publish' | 'archive'
   title: string
   content: string
   meta: string
