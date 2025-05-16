@@ -42,7 +42,7 @@ const DashboardProjects = () => {
       )}
 
       {projectsArchived && projectsArchived.length > 0 && (
-        <ProjectListing title="archive" data={projectsArchived} />
+        <ProjectListing title="archived" data={projectsArchived} />
       )}
     </>
   )
