@@ -1,4 +1,4 @@
-import {type LoaderFunctionArgs, Outlet, redirect} from 'react-router'
+import {type LoaderFunctionArgs, Outlet, data, redirect} from 'react-router'
 import {cx} from 'class-variance-authority'
 import {Nav} from '~/components/admin/nav'
 import {Sidebar} from '~/components/modules'
@@ -12,7 +12,11 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
     return redirect('/login')
   }
 
-  return await refreshSessionTTL(request)
+  const setCookie = await refreshSessionTTL(request)
+
+  return data(setCookie, {
+    headers: setCookie ? {'Set-Cookie': setCookie} : undefined,
+  })
 }
 
 const AdminLayout = () => {
