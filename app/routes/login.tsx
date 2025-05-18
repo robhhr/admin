@@ -3,9 +3,11 @@ import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
   data,
+  isRouteErrorResponse,
   redirect,
   useActionData,
 } from 'react-router'
+import type {Route} from '../+types/root'
 import useFingerprint from '~/hooks/useFingerprint'
 import {CodeAuthForm, LoginForm} from '~/components/forms/admin'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
@@ -249,3 +251,29 @@ const Login = () => {
 }
 
 export default Login
+
+export function ErrorBoundary({error}: Route.ErrorBoundaryProps) {
+  let message = 'cannot connect to server'
+  let details = 'An unexpected error occurred.'
+  let stack: string | undefined
+
+  if (isRouteErrorResponse(error)) {
+    message = error.status === 404 ? '404' : 'Error'
+    details =
+      error.status === 404
+        ? 'The requested page could not be found.'
+        : error.statusText || details
+  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    details = error.message
+    stack = error.stack
+  }
+
+  console.log(stack)
+
+  return (
+    <div className="bg-silver relative mx-auto flex h-screen min-h-96 w-full items-center justify-center p-5">
+      <h1>{message}</h1>
+      <p>{details}</p>
+    </div>
+  )
+}
