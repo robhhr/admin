@@ -14,9 +14,15 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 
   const setCookie = await refreshSessionTTL(request)
 
-  return data(setCookie, {
-    headers: setCookie ? {'Set-Cookie': setCookie} : undefined,
-  })
+  return data(
+    {ok: true},
+    {
+      headers: {
+        ...(setCookie ? {'Set-Cookie': setCookie} : {}),
+        'Cache-Control': 'no-store',
+      },
+    },
+  )
 }
 
 const AdminLayout = () => {
