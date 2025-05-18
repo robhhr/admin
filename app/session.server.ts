@@ -7,6 +7,7 @@ type SessionData = {
   authenticated: boolean
   remember: boolean
   sessionToken?: string
+  expiresAt?: number
 }
 
 type SessionFlashData = {

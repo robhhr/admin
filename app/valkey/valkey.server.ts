@@ -12,6 +12,9 @@ interface ValkeySession {
   remember?: boolean
 }
 
+const EXPIRY_SECONDS = 1800 // 30min
+const REFRESH_THRESHOLD = 5 * 60 * 1000 // 5min
+
 export const valkeyClient = new Valkey({
   port: Number(process.env.REDIS_PORT) || 6380,
   host: process.env.REDIS_HOST || 'localhost',
@@ -89,13 +92,21 @@ export async function refreshSessionTTL(request: Request) {
   const session = await getSession(request.headers.get('Cookie'))
   const sessionToken = session.get('sessionToken')
   const remember = session.get('remember')
+  const expiresAt = session.get('expiresAt')
 
-  if (!sessionToken) return
+  if (!sessionToken || remember || !expiresAt) return null
 
-  if (!remember) {
-    // refresh for another 30min
-    await valkeyClient.expire(`session:${sessionToken}`, 1800)
+  const expiresIn = expiresAt - Date.now()
+  // close to expiry; refresh
+  if (expiresIn < REFRESH_THRESHOLD) {
+    const newExpiresAt = Date.now() + EXPIRY_SECONDS * 1000
 
-    return commitSession(session, {maxAge: 1800})
+    session.set('expiresAt', newExpiresAt)
+
+    await valkeyClient.expire(`session:${sessionToken}`, EXPIRY_SECONDS)
+
+    return commitSession(session, {maxAge: EXPIRY_SECONDS})
   }
+
+  return null
 }

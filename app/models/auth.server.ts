@@ -52,18 +52,19 @@ export async function createUserSession(
   sessionToken?: string,
 ) {
   const session = await getSession(request.headers.get('Cookie'))
+  const now = Date.now()
+  const maxAge = remember ? 30 * 24 * 60 * 60 : 1800 // 30days vs 30min
+  const expiresAt = now + maxAge * 1000
   session.set('userId', userId)
   session.set('authenticated', authenticated)
   session.set('remember', remember)
+  session.set('expiresAt', expiresAt)
 
   if (sessionToken) {
     session.set('sessionToken', sessionToken)
   }
 
-  // 30days vs 30min
-  const maxAge = remember ? 30 * 24 * 60 * 60 : 1800
-
-  return commitSession(session, {maxAge})
+  return commitSession(session)
 }
 
 export async function isUserAuthenticated(request: Request) {
@@ -71,14 +72,14 @@ export async function isUserAuthenticated(request: Request) {
   const userId = session.get('userId')
   const sessionToken = session.get('sessionToken')
   const authenticated = session.get('authenticated')
+  const sessionExpiresAt = session.get('expiresAt')
 
   if (!userId || !sessionToken || !authenticated) {
     return false
   }
 
-  const sessionExpiresAt = session.expires
-    ? new Date(session.expires).getTime()
-    : null
+  console.log('Raw timestamp:', sessionExpiresAt)
+  console.log('Readable time:', new Date(sessionExpiresAt).toISOString())
 
   if (sessionExpiresAt && Date.now() > sessionExpiresAt) {
     return false
