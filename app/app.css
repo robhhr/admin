@@ -18,26 +18,48 @@
   --color-silver: #c0c0c0;
   --color-content: #d2d2d2;
 
-  --color-delete: #b30000;
-  --color-edit: #9a7300;
-  --color-publish: #126180;
+  --color-primary: #fbf1c7;
+  --color-primary-dark: #282828;
+
+  --color-delete: #cc241d;
+  --color-delete-dark: #fb4934;
+
+  --color-edit: #d79921;
+  --color-edit-dark: #fabd2f;
+
+  --color-publish: #458588;
+  --color-publish-dark: #83a598;
 
   /* shadows */
   --shadow-input:
     inset -1px -1px #fff, inset 1px 1px grey, inset -2px -2px #dfdfdf,
     inset 2px 2px #0a0a0a;
+  --shadow-input-dark:
+    inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7, inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7;
+
   --shadow-button-admin:
     inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey,
     inset 2px 2px #dfdfdf;
+  --shadow-button-admin-dark:
+    inset -1px -1px #565656, inset 1px 1px #0a0a0a, inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf;
+
   --shadow-button-admin-pressed:
     inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf,
     inset 2px 2px #808080;
+  --shadow-button-admin-pressed-dark:
+    inset -1px -1px #ffffff, inset 1px 1px #565656, inset -2px -2px #808080,
+    inset 2px 2px #dfdfdf;
+
   --shadow-nav:
     inset -1px 0 #0a0a0a, inset 1px 1px #dfdfdf, inset -2px 0 grey,
     inset 2px 2px #fff;
+
   --shadow-window:
     inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey,
     inset 2px 2px #fff;
+  --shadow-window-dark:
+    inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7, inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7;
 }
 
 @layer base {
@@ -56,10 +78,56 @@
     font-family: var(--font-sans);
     overflow-x: clip;
   }
+
+  .text-editor {
+    strong {
+      font-weight: bold;
+    }
+  }
+
+  .ͼo {
+    @apply !bg-primary dark:!bg-primary-dark;
+  }
+
+  .mdx-toolbar {
+    @apply !bg-silver shadow-window dark:!bg-background-dark dark:shadow-window-dark ml-auto !w-full !max-w-64 border-2 !p-1;
+
+    * {
+      @apply dark:!text-color-dark !bg-transparent;
+    }
+
+    button {
+      @apply !rounded-none !p-0.5;
+    }
+
+    button:hover {
+      @apply !shadow-button-admin dark:!shadow-button-admin-dark;
+    }
+
+    button:active,
+    button[data-state='on'] {
+      @apply !shadow-button-admin-pressed dark:!shadow-button-admin-pressed-dark;
+    }
+
+    button > span {
+      @apply !p-0;
+    }
+
+    span {
+      @apply !text-xs;
+    }
+
+    svg {
+      @apply !text-default !h-4 !w-4;
+    }
+  }
+
+  .mdxeditor-diff-source-wrapper {
+    @apply !p-1 shadow-input mt-5 dark:shadow-input-dark;
+  }
 }
 
 @layer utilities {
-
   /* backgrounds */
   .bg-title-bar {
     background-image: linear-gradient(90deg, navy, #1084d0);

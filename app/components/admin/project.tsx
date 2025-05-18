@@ -23,7 +23,7 @@ export const Project = ({data}: Props) => {
 
       <div className="mt-2.5 flex justify-end">
         <Link
-          className="text-edit hover:text-edit/65 transition-colors duration-100"
+          className="text-edit hover:text-edit/65 dark:text-edit-dark hover:dark:text-edit-dark/65 transition-colors duration-100"
           to={`/admin/project/${data.id}`}
         >
           edit
@@ -35,7 +35,7 @@ export const Project = ({data}: Props) => {
             <input type="hidden" name="projectId" value={data.id} />
             <input type="hidden" name="intent" value="archive" />
             <button
-              className="text-delete hover:text-delete/65 cursor-pointer transition-colors duration-100"
+              className="text-delete hover:text-delete/65 dark:text-delete-dark hover:dark:text-delete-dark/65 cursor-pointer transition-colors duration-100"
               type="submit"
             >
               {isArchiving ? 'archiving...' : 'archive'}
@@ -46,7 +46,7 @@ export const Project = ({data}: Props) => {
             <input type="hidden" name="projectId" value={data.id} />
             <input type="hidden" name="intent" value="unarchive" />
             <button
-              className="text-publish hover:text-publish/65 cursor-pointer transition-colors duration-100"
+              className="text-publish hover:text-publish/65 dark:text-publish-dark hover:dark:text-publish-dark/65 cursor-pointer transition-colors duration-100"
               type="submit"
             >
               {isUnarchiving ? 'unarchiving...' : 'unarchive'}

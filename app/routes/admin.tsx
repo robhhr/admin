@@ -34,7 +34,7 @@ const AdminLayout = () => {
         className={cx(
           'font-ms-sans-serif relative flex h-full min-h-screen items-center justify-center text-xs',
           'bg-silver text-default',
-          'dark:bg-background-admin-dark dark:text-color-dark',
+          'dark:bg-background-dark dark:text-color-dark',
         )}
       >
         <div className="w-full max-w-[680px] p-5 py-20">
@@ -44,7 +44,7 @@ const AdminLayout = () => {
             className={cx(
               'px-2 py-4 md:min-w-[400px]',
               'bg-silver shadow-window',
-              'dark:bg-background-admin-dark',
+              'dark:bg-background-dark dark:shadow-window-dark',
             )}
           >
             <Outlet />

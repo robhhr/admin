@@ -8,6 +8,7 @@ const button = cva('button w-fit', {
         'bg-silver text-shadow-button text-xs min-h-[1.4375rem] px-3 shadow-button-admin cursor-pointer',
         'focus:outline-1 focus:outline-dotted focus:ring-black focus:-outline-offset-4',
         'active:shadow-button-admin-pressed',
+        'dark:bg-background-dark dark:text-color-dark dark:shadow-button-admin-dark',
       ],
     },
     disabled: {
@@ -19,7 +20,7 @@ const button = cva('button w-fit', {
     {
       intent: 'admin',
       disabled: true,
-      className: 'text-shadow-button-disabled text-[grey]',
+      className: 'text-shadow-button-disabled text-[grey] dark:text-color-dark/50',
     },
   ],
   defaultVariants: {

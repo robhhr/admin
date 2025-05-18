@@ -2,10 +2,10 @@ import {useState} from 'react'
 import {Form, useNavigation} from 'react-router'
 import '@mdxeditor/editor/style.css'
 import {Button} from '~/components/modules'
+import {Editor} from '~/components/ui/admin/editor'
 import {InputText} from '~/components/ui/admin/input-text'
 import MetaControls from '~/components/ui/admin/meta'
 import {Select} from '~/components/ui/admin/select'
-import {Editor} from '~/components/ui/admin/editor'
 
 interface ProjectFormProps {
   handleChange: () => void
@@ -50,7 +50,7 @@ export const ProjectForm = ({handleChange, setError}: ProjectFormProps) => {
         <InputText name="title" onChange={handleChange} />
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 p-4">
         <Editor />
       </div>
 

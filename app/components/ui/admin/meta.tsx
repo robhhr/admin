@@ -77,7 +77,7 @@ const MetaControls = () => {
       </Button>
 
       {items.map((item, index) => (
-        <div key={index} className="shadow-window mb-2 flex flex-col p-2">
+        <div key={index} className="shadow-window mb-2 flex flex-col p-2 dark:shadow-window-dark">
           <div className="flex flex-col space-x-2 md:flex-row md:items-center">
             <InputText
               value={item.label}
