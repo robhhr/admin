@@ -42,6 +42,20 @@ export async function createProject({
   }
 }
 
+export async function getProjectById({id}: {id: string}) {
+  const sql = `
+    SELECT * FROM projects WHERE id = $1;
+  `
+
+  try {
+    const project = await query<Project>(sql, [id])
+    return project
+  } catch (error) {
+    console.error('error retrieving project:', error)
+    throw error
+  }
+}
+
 export async function getProjectsByStatus({
   status,
 }: {
