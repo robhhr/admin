@@ -6,23 +6,33 @@ import {Editor} from '~/components/ui/admin/editor'
 import {InputText} from '~/components/ui/admin/input-text'
 import MetaControls from '~/components/ui/admin/meta'
 import {Select} from '~/components/ui/admin/select'
+import type { ProjectEdit } from '~/models/projects.server'
 
 interface ProjectFormProps {
   handleChange: () => void
   setError: () => void
-  projectData?: {
-    title: string
-    status: string
-  }
+  projectData?: ProjectEdit
 }
 
-export const ProjectForm = ({handleChange, setError}: ProjectFormProps) => {
+export const ProjectForm = ({
+  handleChange,
+  setError,
+  projectData,
+}: ProjectFormProps) => {
   const navigation = useNavigation()
-  const [selected, setSelected] = useState('draft')
+  const [selected, setSelected] = useState(
+    projectData ? projectData.status.toString() : 'draft',
+  )
+
+  console.log(projectData)
 
   return (
     <Form method="post" className="mt-4">
-      <input type="hidden" name="action" value="login" />
+      <input
+        type="hidden"
+        name="action"
+        value={projectData ? 'update' : 'create'}
+      />
 
       <div className="flex flex-col">
         <label htmlFor="status" className="mb-1.5">
@@ -34,6 +44,7 @@ export const ProjectForm = ({handleChange, setError}: ProjectFormProps) => {
           options={[
             {value: 'draft', label: 'draft'},
             {value: 'publish', label: 'publish'},
+            ...(projectData ? [{value: 'archive', label: 'archive'}] : []),
           ]}
           value={selected}
           onChange={e => {
@@ -47,11 +58,15 @@ export const ProjectForm = ({handleChange, setError}: ProjectFormProps) => {
         <label htmlFor="title" className="mb-1.5">
           title
         </label>
-        <InputText name="title" onChange={handleChange} />
+        <InputText
+          name="title"
+          onChange={handleChange}
+          defaultValue={projectData ? projectData.title : ''}
+        />
       </div>
 
       <div className="mt-4 p-4">
-        <Editor />
+        <Editor data={projectData && projectData.content} />
       </div>
 
       <div className="mt-2 flex flex-col">

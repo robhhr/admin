@@ -12,6 +12,19 @@ export interface Project {
   meta: string
 }
 
+export interface ProjectEdit {
+  id: string
+  status: Status['status']
+  title: string
+  content: string
+  metadata?: {
+    label: string
+    value: string
+    showAdditional: boolean
+    additionalValues?: string[]
+  }[]
+}
+
 export async function createProject({
   status,
   title,
@@ -48,8 +61,8 @@ export async function getProjectById({id}: {id: string}) {
   `
 
   try {
-    const project = await query<Project>(sql, [id])
-    return project
+    const project = await query<ProjectEdit>(sql, [id])
+    return project[0]
   } catch (error) {
     console.error('error retrieving project:', error)
     throw error
