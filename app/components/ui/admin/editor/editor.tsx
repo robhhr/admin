@@ -23,6 +23,7 @@ const markdown = ``
 export const Editor = () => {
   const ref = useRef<MDXEditorMethods>(null)
   const [mounted, setMounted] = useState(false)
+  const [content, setContent] = useState('')
 
   useEffect(() => {
     setMounted(true)
@@ -31,34 +32,37 @@ export const Editor = () => {
   if (!mounted) return null
 
   return (
-    <MDXEditor
-      ref={ref}
-      markdown={markdown}
-      contentEditableClassName="prose text-editor"
-      plugins={[
-        headingsPlugin(),
-        listsPlugin(),
-        quotePlugin(),
-        codeBlockPlugin({defaultCodeBlockLanguage: 'js'}),
-        linkPlugin(),
-        thematicBreakPlugin(),
-        linkDialogPlugin(),
-        diffSourcePlugin({
-          viewMode: 'source',
-          readOnlyDiff: true,
-        }),
-        toolbarPlugin({
-          toolbarClassName: 'mdx-toolbar',
-          toolbarContents: () => (
-            <DiffSourceToggleWrapper>
-              <BoldItalicUnderlineToggles />
-              <CodeToggle />
-              <CreateLink />
-            </DiffSourceToggleWrapper>
-          ),
-        }),
-      ]}
-      // onChange={() => console.log(ref.current?.getMarkdown())}
-    />
+    <>
+      <MDXEditor
+        ref={ref}
+        markdown={markdown}
+        contentEditableClassName="prose text-editor"
+        plugins={[
+          headingsPlugin(),
+          listsPlugin(),
+          quotePlugin(),
+          codeBlockPlugin({defaultCodeBlockLanguage: 'js'}),
+          linkPlugin(),
+          thematicBreakPlugin(),
+          linkDialogPlugin(),
+          diffSourcePlugin({
+            viewMode: 'source',
+            readOnlyDiff: true,
+          }),
+          toolbarPlugin({
+            toolbarClassName: 'mdx-toolbar',
+            toolbarContents: () => (
+              <DiffSourceToggleWrapper>
+                <BoldItalicUnderlineToggles />
+                <CodeToggle />
+                <CreateLink />
+              </DiffSourceToggleWrapper>
+            ),
+          }),
+        ]}
+        onChange={value => setContent(value)}
+      />
+      <input type="hidden" name="content" value={content} />
+    </>
   )
 }
