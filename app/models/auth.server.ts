@@ -78,8 +78,8 @@ export async function isUserAuthenticated(request: Request) {
     return false
   }
 
-  console.log('Raw timestamp:', sessionExpiresAt)
-  console.log('Readable time:', new Date(sessionExpiresAt).toISOString())
+  // console.log('Raw timestamp:', sessionExpiresAt)
+  // console.log('Readable time:', new Date(sessionExpiresAt).toISOString())
 
   if (sessionExpiresAt && Date.now() > sessionExpiresAt) {
     return false
