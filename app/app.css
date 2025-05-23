@@ -27,15 +27,25 @@
   --color-edit: #d79921;
   --color-edit-dark: #fabd2f;
 
+  --color-green: #98971a;
+  --color-green-dark: #b8bb26;
+
+  --color-orange: #d65d0e;
+  --color-orange-dark: #fe8019;
+
   --color-publish: #458588;
   --color-publish-dark: #83a598;
+
+  --color-purple: #b16286;
+  --color-purple-dark: #d3869b;
 
   /* shadows */
   --shadow-input:
     inset -1px -1px #fff, inset 1px 1px grey, inset -2px -2px #dfdfdf,
     inset 2px 2px #0a0a0a;
   --shadow-input-dark:
-    inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7, inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7;
+    inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7, inset -1px -1px #fbf1c7,
+    inset 1px 1px #fbf1c7;
 
   --shadow-button-admin:
     inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey,
@@ -59,7 +69,8 @@
     inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey,
     inset 2px 2px #fff;
   --shadow-window-dark:
-    inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7, inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7;
+    inset -1px -1px #fbf1c7, inset 1px 1px #fbf1c7, inset -1px -1px #fbf1c7,
+    inset 1px 1px #fbf1c7;
 }
 
 @layer base {
@@ -90,7 +101,7 @@
   }
 
   .mdx-toolbar {
-    @apply !bg-silver shadow-window dark:!bg-background-dark dark:shadow-window-dark ml-auto !w-full !max-w-64 border-2 !p-1;
+    @apply !bg-silver shadow-window dark:!bg-background-dark dark:shadow-window-dark ml-auto !w-full !max-w-64 border-2 !p-1 lowercase;
 
     * {
       @apply dark:!text-color-dark !bg-transparent;
@@ -123,7 +134,100 @@
   }
 
   .mdxeditor-diff-source-wrapper {
-    @apply !p-1 shadow-input mt-5 dark:shadow-input-dark;
+    @apply shadow-input dark:shadow-input-dark mt-5 !p-1;
+  }
+
+  .cm-gutterElement {
+    color: var(--color-text) !important;
+    .dark & {
+      color: var(--color-text-dark) !important;
+    }
+  }
+
+  .cm-gutterElement.cm-activeLineGutter {
+    background-color: var(--color-background-dark) !important;
+    color: var(--color-primary) !important;
+    .dark & {
+      background-color: var(--color-background) !important;
+      color: var(--color-primary-dark) !important;
+    }
+  }
+
+  .cm-content {
+    color: var(--color-text);
+    .dark & {
+      color: var(--color-text-dark);
+    }
+
+    .ͼ18 {
+      color: var(--color-text) !important;
+      .dark & {
+        color: var(--color-text-dark) !important;
+      }
+    }
+
+    .ͼ1d {
+      color: var(--color-edit) !important;
+      .dark & {
+        color: var(--color-edit-dark) !important;
+      }
+    }
+
+    .ͼ16 {
+      color: var(--color-orange) !important;
+      .dark & {
+        color: var(--color-orange-dark) !important;
+      }
+    }
+
+    .ͼ1c {
+      color: var(--color-green) !important;
+      .dark & {
+        color: var(--color-green-dark) !important;
+      }
+    }
+
+    .ͼ1m {
+      color: var(--color-purple) !important;
+      .dark & {
+        color: var(--color-purple-dark) !important;
+      }
+    }
+
+    .ͼ1h,
+    .ͼ1i,
+    .ͼ1j,
+    .ͼ19 {
+      @apply font-bold;
+      color: var(--color-publish) !important;
+
+      .dark & {
+        color: var(--color-publish-dark) !important;
+      }
+    }
+
+    .ͼ1l {
+      color: var(--color-delete) !important;
+
+      .dark & {
+        color: var(--color-delete-dark) !important;
+      }
+    }
+
+    /* # */
+    .ͼ1h {
+      @apply text-2xl;
+    }
+
+    /* ##, ###, #### */
+    .ͼ1i {
+      @apply text-xl;
+    }
+
+    /* #####, ###### */
+    .ͼ1j {
+      @apply text-lg;
+    }
   }
 }
 
