@@ -18,12 +18,11 @@ import {
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 
-const markdown = ``
-
-export const Editor = () => {
+export const Editor = ({data}: {data?: string}) => {
+  const markdown = data || ''
   const ref = useRef<MDXEditorMethods>(null)
   const [mounted, setMounted] = useState(false)
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState(markdown)
 
   useEffect(() => {
     setMounted(true)
