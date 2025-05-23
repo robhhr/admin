@@ -1,15 +1,16 @@
 import {useEffect, useRef, useState} from 'react'
 import {
-  BlockTypeSelect,
   BoldItalicUnderlineToggles,
   CodeToggle,
   CreateLink,
   DiffSourceToggleWrapper,
   MDXEditor,
   type MDXEditorMethods,
+  codeBlockPlugin,
   diffSourcePlugin,
   headingsPlugin,
   linkDialogPlugin,
+  linkPlugin,
   listsPlugin,
   quotePlugin,
   thematicBreakPlugin,
@@ -17,22 +18,7 @@ import {
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 
-const markdown = `
-  # Hello World
-  ---
-  * Item 1
-  * Item 2
-  * Item 3
-    * nested item
-
-  **hello**
-    
-  > This is a quote
-
-  ## Hello World 2
-  1. Item 1
-  2. Item 2
-`
+const markdown = ``
 
 export const Editor = () => {
   const ref = useRef<MDXEditorMethods>(null)
@@ -53,6 +39,8 @@ export const Editor = () => {
         headingsPlugin(),
         listsPlugin(),
         quotePlugin(),
+        codeBlockPlugin({defaultCodeBlockLanguage: 'js'}),
+        linkPlugin(),
         thematicBreakPlugin(),
         linkDialogPlugin(),
         diffSourcePlugin({
