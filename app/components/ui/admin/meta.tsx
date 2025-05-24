@@ -1,7 +1,8 @@
 import {type MouseEvent, useState} from 'react'
 import {InputText} from './input-text'
+import {IconFormDelete} from '~/components/icons'
 import {Button} from '~/components/modules/button'
-import type { MetaProps } from '~/models/projects.server'
+import type {MetaProps} from '~/models/projects.server'
 
 interface ContentItem {
   label: string
@@ -16,8 +17,6 @@ interface MetaControlsProps {
 
 const MetaControls = ({metadata}: MetaControlsProps) => {
   const [items, setItems] = useState<ContentItem[]>(metadata || [])
-
-  console.log(metadata)
 
   const addItem = (e: MouseEvent) => {
     e.preventDefault()
@@ -45,6 +44,11 @@ const MetaControls = ({metadata}: MetaControlsProps) => {
           : item,
       ),
     )
+  }
+
+  const removeItem = (index: number) => (e: MouseEvent) => {
+    e.preventDefault()
+    setItems(items.filter((_, i) => i !== index))
   }
 
   const updateLabel = (index: number, newLabel: string) => {
@@ -84,7 +88,10 @@ const MetaControls = ({metadata}: MetaControlsProps) => {
       </Button>
 
       {items.map((item, index) => (
-        <div key={index} className="shadow-window mb-2 flex flex-col p-2 dark:shadow-window-dark">
+        <div
+          key={index}
+          className="shadow-window dark:shadow-window-dark mb-2 flex flex-col p-2"
+        >
           <div className="flex flex-col space-x-2 md:flex-row md:items-center">
             <InputText
               value={item.label}
@@ -103,6 +110,13 @@ const MetaControls = ({metadata}: MetaControlsProps) => {
                 className="mt-1.5 h-fit"
               >
                 {item.showAdditional ? 'remove subitems' : 'add subitem opt'}
+              </Button>
+
+              <Button
+                onClick={removeItem(index)}
+                className="mt-1.5 h-fit !px-1"
+              >
+                <IconFormDelete />
               </Button>
 
               {item.showAdditional && (
