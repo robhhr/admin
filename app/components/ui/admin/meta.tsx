@@ -1,16 +1,23 @@
 import {type MouseEvent, useState} from 'react'
 import {InputText} from './input-text'
 import {Button} from '~/components/modules/button'
+import type { MetaProps } from '~/models/projects.server'
 
 interface ContentItem {
   label: string
   value: string
-  additionalValues: string[]
+  additionalValues?: string[]
   showAdditional: boolean
 }
 
-const MetaControls = () => {
-  const [items, setItems] = useState<ContentItem[]>([])
+interface MetaControlsProps {
+  metadata?: MetaProps[]
+}
+
+const MetaControls = ({metadata}: MetaControlsProps) => {
+  const [items, setItems] = useState<ContentItem[]>(metadata || [])
+
+  console.log(metadata)
 
   const addItem = (e: MouseEvent) => {
     e.preventDefault()
@@ -33,7 +40,7 @@ const MetaControls = () => {
     e.preventDefault()
     setItems(
       items.map((item, i) =>
-        i === index
+        i === index && item.additionalValues
           ? {...item, additionalValues: [...item.additionalValues, '']}
           : item,
       ),
@@ -59,7 +66,7 @@ const MetaControls = () => {
   ) => {
     setItems(
       items.map((item, i) => {
-        if (i === index) {
+        if (i === index && item.additionalValues) {
           const updatedSubs = item.additionalValues.map((sub, j) =>
             j === subIndex ? newSubValue : sub,
           )
@@ -114,7 +121,7 @@ const MetaControls = () => {
           {item.showAdditional && (
             <div className="flex">
               <div className="mt-2 flex flex-col sm:ml-[152px]">
-                {item.additionalValues.map((subValue, subIndex) => (
+                {item.additionalValues?.map((subValue, subIndex) => (
                   <div
                     key={subIndex}
                     className="mb-1 flex items-center space-x-2"

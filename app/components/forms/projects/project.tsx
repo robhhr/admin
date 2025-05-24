@@ -6,7 +6,7 @@ import {Editor} from '~/components/ui/admin/editor'
 import {InputText} from '~/components/ui/admin/input-text'
 import MetaControls from '~/components/ui/admin/meta'
 import {Select} from '~/components/ui/admin/select'
-import type { ProjectEdit } from '~/models/projects.server'
+import type {ProjectEdit} from '~/models/projects.server'
 
 interface ProjectFormProps {
   handleChange: () => void
@@ -23,8 +23,6 @@ export const ProjectForm = ({
   const [selected, setSelected] = useState(
     projectData ? projectData.status.toString() : 'draft',
   )
-
-  console.log(projectData)
 
   return (
     <Form method="post" className="mt-4">
@@ -70,7 +68,7 @@ export const ProjectForm = ({
       </div>
 
       <div className="mt-2 flex flex-col">
-        <MetaControls />
+        <MetaControls metadata={projectData && projectData.metadata} />
       </div>
 
       <Button

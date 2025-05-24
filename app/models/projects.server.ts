@@ -12,17 +12,19 @@ export interface Project {
   meta: string
 }
 
+export interface MetaProps {
+  label: string
+  value: string
+  showAdditional: boolean
+  additionalValues?: string[]
+}
+
 export interface ProjectEdit {
   id: string
   status: Status['status']
   title: string
   content: string
-  metadata?: {
-    label: string
-    value: string
-    showAdditional: boolean
-    additionalValues?: string[]
-  }[]
+  metadata?: MetaProps[]
 }
 
 export async function createProject({
