@@ -78,7 +78,7 @@ export const ProjectForm = ({
         intent="admin"
         type="submit"
       >
-        create
+        {projectData ? 'update' : 'create'}
       </Button>
     </Form>
   )
