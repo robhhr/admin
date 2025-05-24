@@ -4,11 +4,13 @@ import {
   CodeToggle,
   CreateLink,
   DiffSourceToggleWrapper,
+  InsertImage,
   MDXEditor,
   type MDXEditorMethods,
   codeBlockPlugin,
   diffSourcePlugin,
   headingsPlugin,
+  imagePlugin,
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
@@ -44,6 +46,7 @@ export const Editor = ({data}: {data?: string}) => {
           linkPlugin(),
           thematicBreakPlugin(),
           linkDialogPlugin(),
+          imagePlugin(),
           diffSourcePlugin({
             viewMode: 'source',
             readOnlyDiff: true,
@@ -55,6 +58,7 @@ export const Editor = ({data}: {data?: string}) => {
                 <BoldItalicUnderlineToggles />
                 <CodeToggle />
                 <CreateLink />
+                <InsertImage />
               </DiffSourceToggleWrapper>
             ),
           }),
