@@ -71,6 +71,29 @@ export async function getProjectById({id}: {id: string}) {
   }
 }
 
+export async function updateProject({
+  id,
+  status,
+  title,
+  content,
+  meta,
+}: Project) {
+  const sql = `
+    UPDATE projects
+    SET status = $2, title = $3, content = $4, metadata = $5
+    WHERE id = $1
+  `
+
+  try {
+    await query<Project>(sql, [id, status, title, content, meta])
+
+    console.log(`updated project titled ${title} and record: ${id}`)
+  } catch (error) {
+    console.error('error updating project:', error)
+    throw error
+  }
+}
+
 export async function getProjectsByStatus({
   status,
 }: {
