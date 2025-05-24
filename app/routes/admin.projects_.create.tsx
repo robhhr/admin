@@ -1,5 +1,10 @@
 import {useEffect, useState} from 'react'
-import {type ActionFunctionArgs, redirect, useActionData} from 'react-router'
+import {
+  type ActionFunctionArgs,
+  redirect,
+  useActionData,
+  useNavigate,
+} from 'react-router'
 import {ControlsProjects} from '~/components/admin'
 import {ProjectForm} from '~/components/forms/projects'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
@@ -39,11 +44,7 @@ const DashboardProjectsCreate = () => {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const actionData = useActionData<typeof action>()
-  // console.log(actionData, ' actionData')
-  // console.log(actionData && JSON.parse(actionData.meta))
-
-  // console.log(navigation)
-  // console.log(actionData, ' actionData')
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (actionData?.error) {
@@ -52,6 +53,16 @@ const DashboardProjectsCreate = () => {
       setSuccess(actionData.success)
     }
   }, [actionData])
+
+  useEffect(() => {
+    if (actionData?.success) {
+      const timeout = setTimeout(() => {
+        navigate('/admin/projects')
+      }, 1000)
+
+      return () => clearTimeout(timeout)
+    }
+  }, [actionData, navigate])
 
   const handleChange = () => setError(null)
 

@@ -5,6 +5,7 @@ import {
   redirect,
   useActionData,
   useLoaderData,
+  useNavigate,
 } from 'react-router'
 import {ControlsProjects} from '~/components/admin'
 import {ProjectForm} from '~/components/forms/projects'
@@ -80,6 +81,7 @@ const DashboardProjectsView = () => {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const actionData = useActionData<typeof action>()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (actionData?.error) {
@@ -90,6 +92,16 @@ const DashboardProjectsView = () => {
   }, [actionData])
 
   const handleChange = () => setError(null)
+
+  useEffect(() => {
+    if (actionData?.success) {
+      const timeout = setTimeout(() => {
+        navigate('/admin/projects')
+      }, 1000)
+
+      return () => clearTimeout(timeout)
+    }
+  }, [actionData, navigate])
 
   return (
     <>
