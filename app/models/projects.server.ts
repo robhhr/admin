@@ -80,7 +80,7 @@ export async function updateProject({
 }: Project) {
   const sql = `
     UPDATE projects
-    SET status = $2, title = $3, content = $4, metadata = $5
+    SET status = $2, title = $3, content = $4, metadata = $5, updated_at = current_timestamp
     WHERE id = $1
   `
 
@@ -100,7 +100,7 @@ export async function getProjectsByStatus({
   status: Project['status']
 }) {
   const sql = `
-    SELECT id, title, status FROM projects WHERE status = $1;
+    SELECT id, title, status FROM projects WHERE status = $1 ORDER BY updated_at DESC;
   `
 
   try {
@@ -116,7 +116,7 @@ export async function getProjectsByStatus({
 export async function archiveProject({id}: {id: string}) {
   const sql = `
     UPDATE projects
-    SET status = 'archive'
+    SET status = 'archive', updated_at = current_timestamp
     WHERE id = $1
   `
 
@@ -133,7 +133,7 @@ export async function archiveProject({id}: {id: string}) {
 export async function unarchiveProject({id}: {id: string}) {
   const sql = `
     UPDATE projects
-    SET status = 'draft'
+    SET status = 'draft', updated_at = current_timestamp
     WHERE id = $1
   `
 
