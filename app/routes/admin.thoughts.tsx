@@ -1,9 +1,15 @@
+import {ControlsThoughts} from '~/components/admin'
+
 export const loader = () => {
   return {}
 }
 
 const AdminThoughts = () => {
-  return <div>thoughts</div>
+  return (
+    <>
+      <ControlsThoughts />
+    </>
+  )
 }
 
 export default AdminThoughts
