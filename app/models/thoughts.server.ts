@@ -39,12 +39,26 @@ export async function createThought({
   return thought.data[0]
 }
 
-export async function getThoughtsByStatus(status: ThoughtStatus[]) {
+export async function getThoughtsByStatusWithTags(status: ThoughtStatus[]) {
   const sql = `
-    SELECT *
-    FROM thoughts
-    WHERE status = ANY($1)
-    ORDER BY updated_at DESC;
+      SELECT 
+      t.id,
+      t.title,
+      t.content,
+      t.status,
+      t.is_pinned,
+      t.favorites,
+      t.created_at,
+      t.updated_at,
+      COALESCE(json_agg(
+        DISTINCT jsonb_build_object('id', tg.id, 'name', tg.name)
+      ) FILTER (WHERE tg.id IS NOT NULL), '[]') AS tags
+    FROM thoughts t
+    LEFT JOIN thought_tags tt ON t.id = tt.thought_id
+    LEFT JOIN tags tg ON tt.tag_id = tg.id
+    WHERE t.status = ANY($1)
+    GROUP BY t.id
+    ORDER BY t.is_pinned DESC, t.updated_at DESC;
   `
 
   const thoughts = await tryCatch(query<ThoughtProps>(sql, [status]))
@@ -60,7 +74,7 @@ export async function getThoughtsByStatus(status: ThoughtStatus[]) {
 export async function archiveThought({id}: {id: string}) {
   const sql = `
     UPDATE thoughts
-    SET status = 'archive', updated_at = current_timestamp
+    SET is_pinned = false, status = 'archive', updated_at = current_timestamp
     WHERE id = $1
   `
 

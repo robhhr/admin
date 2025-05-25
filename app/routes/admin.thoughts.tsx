@@ -4,14 +4,14 @@ import {isUserAuthenticated} from '~/models/auth.server'
 import {
   type ThoughtProps,
   archiveThought,
-  getThoughtsByStatus,
+  getThoughtsByStatusWithTags,
   unarchiveThought,
 } from '~/models/thoughts.server'
 import {tryCatch} from '~/utils'
 
 export const loader = async () => {
   const data = await tryCatch(
-    getThoughtsByStatus(['publish', 'draft', 'archive']),
+    getThoughtsByStatusWithTags(['publish', 'draft', 'archive']),
   )
 
   if (data.error) {
