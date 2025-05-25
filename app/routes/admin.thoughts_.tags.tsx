@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import {
   type ActionFunctionArgs,
   Form,
+  redirect,
   useActionData,
   useLoaderData,
   useNavigation,
@@ -11,6 +12,7 @@ import {IconFormDelete} from '~/components/icons'
 import {Button} from '~/components/modules'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {InputText} from '~/components/ui/admin/input-text'
+import {isUserAuthenticated} from '~/models/auth.server'
 import {createTag, deleteTagById, getTags} from '~/models/tags'
 import {tryCatch} from '~/utils'
 
@@ -26,6 +28,12 @@ export const loader = async () => {
 }
 
 export const action = async ({request}: ActionFunctionArgs) => {
+  const isAuth = await isUserAuthenticated(request)
+
+  if (!isAuth) {
+    return redirect('/login')
+  }
+
   const formData = await request.formData()
   const data = Object.fromEntries(formData) as Record<string, string>
   const {action} = data
