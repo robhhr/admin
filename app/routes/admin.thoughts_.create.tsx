@@ -1,11 +1,28 @@
 import {useEffect, useState} from 'react'
-import {type ActionFunctionArgs, redirect, useActionData} from 'react-router'
+import {
+  type ActionFunctionArgs,
+  redirect,
+  useActionData,
+  useLoaderData,
+} from 'react-router'
 import {ControlsThoughts} from '~/components/admin'
 import {ThoughtForm} from '~/components/forms/thoughts'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {isUserAuthenticated} from '~/models/auth.server'
+import {getTags} from '~/models/tags'
 import {createThought} from '~/models/thoughts.server'
 import {tryCatch} from '~/utils'
+
+export const loader = async () => {
+  const tags = await tryCatch(getTags())
+
+  if (tags.error) {
+    console.error('error retrieving tags:', tags.error)
+    return {error: tags.error}
+  }
+
+  return {error: null, data: tags.data}
+}
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
@@ -31,7 +48,8 @@ export const action = async ({request}: ActionFunctionArgs) => {
   }
 
   const status = data.status as 'draft' | 'publish' | 'archive'
-  const result = await tryCatch(createThought({title, content, status}))
+  const tags = formData.getAll('tags') as string[]
+  const result = await tryCatch(createThought({title, content, status, tags}))
 
   if (result.error) {
     console.error('error creating thought:', result.error)
@@ -49,6 +67,7 @@ const DashboardThoughtsCreate = () => {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const actionData = useActionData<typeof action>()
+  const {data} = useLoaderData<typeof loader>()
 
   useEffect(() => {
     if (actionData?.error) {
@@ -64,7 +83,7 @@ const DashboardThoughtsCreate = () => {
     <>
       <ControlsThoughts />
 
-      <ThoughtForm handleChange={handleChange} />
+      <ThoughtForm handleChange={handleChange} tags={data} />
 
       <FeedbackDialog
         actionData={error ? {error} : success ? {success} : undefined}

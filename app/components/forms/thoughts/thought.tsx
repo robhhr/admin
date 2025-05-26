@@ -4,14 +4,16 @@ import {Button} from '~/components/modules'
 import {Editor} from '~/components/ui/admin/editor'
 import {InputText} from '~/components/ui/admin/input-text'
 import {Select} from '~/components/ui/admin/select'
+import type {TagProps} from '~/models/tags'
 import type {ThoughtProps} from '~/models/thoughts.server'
 
 interface ThoughtFormProps {
   handleChange?: () => void
   data?: ThoughtProps
+  tags?: TagProps[]
 }
 
-export const ThoughtForm = ({handleChange, data}: ThoughtFormProps) => {
+export const ThoughtForm = ({handleChange, data, tags}: ThoughtFormProps) => {
   const navigation = useNavigation()
   const [selected, setSelected] = useState(
     data ? data.status.toString() : 'draft',
@@ -54,6 +56,25 @@ export const ThoughtForm = ({handleChange, data}: ThoughtFormProps) => {
 
       <div className="mt-2 p-4">
         <Editor data={data && data.content} />
+      </div>
+
+      {/*TODO: tags*/}
+      <div>
+        <label htmlFor="tags" className="mb-1.5">
+          tags
+        </label>
+
+        {tags?.map(tag => (
+          <div key={tag.id} className="flex items-center">
+            <input
+              type="checkbox"
+              name="tags"
+              value={tag.id}
+              // defaultChecked={tags?.includes(tag.id)}
+            />
+            <span className="ml-2">{tag.name}</span>
+          </div>
+        ))}
       </div>
 
       <Button

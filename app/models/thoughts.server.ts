@@ -10,12 +10,14 @@ export interface ThoughtProps {
   favorites: number
   is_pinned?: boolean
   status: ThoughtStatus
+  tags?: string[]
 }
 
 export async function createThought({
   title,
   content,
   status,
+  tags,
 }: Omit<ThoughtProps, 'id' | 'favorites'>) {
   const sql = `
     INSERT INTO thoughts (
@@ -34,6 +36,21 @@ export async function createThought({
   if (thought.error) {
     console.error('error inserting thought:', thought.error)
     throw thought.error
+  }
+
+  const thoughtId = thought.data[0].id
+
+  if (tags && tags.length > 0) {
+    const valueTuples = tags.map((_, index) => `($1, $${index + 2})`).join(', ')
+    const values = [thoughtId, ...tags.map(Number)]
+
+    const bulkInsertSql = `
+    INSERT INTO thought_tags (thought_id, tag_id)
+    VALUES ${valueTuples}
+    ON CONFLICT DO NOTHING;
+  `
+
+    await tryCatch(query(bulkInsertSql, values))
   }
 
   return thought.data[0]
