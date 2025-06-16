@@ -1,4 +1,5 @@
 import {query} from '../../db'
+import slugify from 'slugify'
 
 interface Status {
   status: 'draft' | 'publish' | 'archive'
@@ -39,14 +40,21 @@ export async function createProject({
       title,
       content,
       metadata,
+      slug,
       updated_at
     )
-    VALUES ($1, $2, $3, $4, current_timestamp)
+    VALUES ($1, $2, $3, $4, $5, current_timestamp)
     RETURNING id;
   `
 
   try {
-    const project = await query<Project>(sql, [status, title, content, meta])
+    const project = await query<Project>(sql, [
+      status,
+      title,
+      content,
+      meta,
+      slugify(title, {lower: true, strict: true}),
+    ])
 
     console.log(
       `inserted project titled ${title} and record: ${JSON.stringify(project)}`,
