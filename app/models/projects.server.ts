@@ -1,5 +1,6 @@
 import {query} from '../../db'
 import slugify from 'slugify'
+import {tryCatch} from '~/utils'
 
 interface Status {
   status: 'draft' | 'publish' | 'archive'
@@ -102,23 +103,19 @@ export async function updateProject({
   }
 }
 
-export async function getProjectsByStatus({
-  status,
-}: {
-  status: Project['status']
-}) {
+export async function getProjects() {
   const sql = `
-    SELECT id, title, status FROM projects WHERE status = $1 ORDER BY updated_at DESC;
+    SELECT id, title, status FROM projects ORDER BY updated_at DESC;
   `
 
-  try {
-    const projects = await query<Project>(sql, [status])
+  const projects = await tryCatch(query<Project>(sql))
 
-    return projects
-  } catch (error) {
-    console.error('error getting projects:', error)
-    throw error
+  if (projects.error) {
+    console.error('error getting projects:', projects.error)
+    throw projects.error
   }
+
+  return projects.data
 }
 
 export async function archiveProject({id}: {id: string}) {

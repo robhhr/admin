@@ -2,10 +2,12 @@ import {type ActionFunctionArgs, redirect, useLoaderData} from 'react-router'
 import {ControlsProjects, ProjectListing} from '~/components/admin'
 import {isUserAuthenticated} from '~/models/auth.server'
 import {
+  type Project,
   archiveProject,
-  getProjectsByStatus,
+  getProjects,
   unarchiveProject,
 } from '~/models/projects.server'
+import {tryCatch} from '~/utils'
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
@@ -51,34 +53,53 @@ export const action = async ({request}: ActionFunctionArgs) => {
 }
 
 export const loader = async () => {
-  const [projectsPublished, projectsDraft, projectsArchived] =
-    await Promise.all([
-      getProjectsByStatus({status: 'publish'}),
-      getProjectsByStatus({status: 'draft'}),
-      getProjectsByStatus({status: 'archive'}),
-    ])
+  const data = await tryCatch(getProjects())
 
-  return {projectsArchived, projectsDraft, projectsPublished}
+  if (data.error) {
+    console.error('error retrieving projects:', data.error)
+    return {error: data.error}
+  }
+
+  const grouped = {
+    projectsPublished: [] as Project[],
+    projectsDraft: [] as Project[],
+    projectsArchived: [] as Project[],
+  }
+
+  for (const project of data.data) {
+    switch (project.status) {
+      case 'publish':
+        grouped.projectsPublished.push(project)
+        break
+      case 'draft':
+        grouped.projectsDraft.push(project)
+        break
+      case 'archive':
+        grouped.projectsArchived.push(project)
+        break
+    }
+  }
+
+  return {data: grouped, error: null}
 }
 
 const DashboardProjects = () => {
-  const {projectsArchived, projectsDraft, projectsPublished} =
-    useLoaderData<typeof loader>()
+  const {data} = useLoaderData<typeof loader>()
 
   return (
     <>
       <ControlsProjects />
 
-      {projectsDraft && projectsDraft.length > 0 && (
-        <ProjectListing title="draft" data={projectsDraft} />
+      {data && data.projectsDraft.length > 0 && (
+        <ProjectListing title="draft" data={data.projectsDraft} />
       )}
 
-      {projectsPublished && projectsPublished.length > 0 && (
-        <ProjectListing title="published" data={projectsPublished} />
+      {data && data.projectsPublished.length > 0 && (
+        <ProjectListing title="published" data={data.projectsPublished} />
       )}
 
-      {projectsArchived && projectsArchived.length > 0 && (
-        <ProjectListing title="archived" data={projectsArchived} />
+      {data && data.projectsArchived.length > 0 && (
+        <ProjectListing title="archived" data={data.projectsArchived} />
       )}
     </>
   )
