@@ -23,6 +23,9 @@ export const Nav = () => {
         <li>
           <Link to="/admin/thoughts">thoughts</Link>
         </li>
+        <li>
+          <Link to="/admin/notes">notes</Link>
+        </li>
       </ul>
     </nav>
   )
