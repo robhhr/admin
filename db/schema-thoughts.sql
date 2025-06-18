@@ -1,10 +1,13 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+DROP TABLE IF EXISTS thoughts;
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS thought_tags;
+
 CREATE TYPE thought_status AS ENUM ('draft', 'publish', 'archive');
 
 CREATE TABLE IF NOT EXISTS thoughts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title VARCHAR(150) NOT NULL,
   content TEXT NOT NULL,
   status thought_status DEFAULT 'draft',
   is_pinned BOOLEAN DEFAULT false,

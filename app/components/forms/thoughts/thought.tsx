@@ -2,7 +2,6 @@ import {useState} from 'react'
 import {Form, useNavigation} from 'react-router'
 import {Button} from '~/components/modules'
 import {Editor} from '~/components/ui/admin/editor'
-import {InputText} from '~/components/ui/admin/input-text'
 import {Select} from '~/components/ui/admin/select'
 import type {TagProps} from '~/models/tags'
 import type {ThoughtProps} from '~/models/thoughts.server'
@@ -18,21 +17,13 @@ export const ThoughtForm = ({handleChange, data, tags}: ThoughtFormProps) => {
   const [selected, setSelected] = useState(
     data ? data.status.toString() : 'draft',
   )
+  const isCreate = data === undefined
+  const arr = isCreate ? tags : data.tags
+  // const fetcher = useFetcher()
 
   return (
     <Form method="post" className="mt-4">
       <input type="hidden" name="action" value={data ? 'update' : 'create'} />
-
-      <div className="flex flex-col">
-        <label htmlFor="title" className="mb-1.5">
-          title
-        </label>
-        <InputText
-          name="title"
-          onChange={handleChange}
-          defaultValue={data ? data.title : ''}
-        />
-      </div>
 
       <div className="flex flex-col">
         <label htmlFor="status" className="mb-1.5">
@@ -60,12 +51,14 @@ export const ThoughtForm = ({handleChange, data, tags}: ThoughtFormProps) => {
 
       {/*TODO: tags*/}
       <div>
-        <label htmlFor="tags" className="mb-1.5">
-          tags
-        </label>
+        {arr && arr.length > 0 && (
+          <label htmlFor="tags" className="mb-1.5">
+            tags
+          </label>
+        )}
 
-        {tags?.map(tag => (
-          <div key={tag.id} className="flex items-center">
+        {arr?.map((tag, i) => (
+          <div key={i} className="flex items-center">
             <input
               type="checkbox"
               name="tags"

@@ -4,6 +4,7 @@ import {
   redirect,
   useActionData,
   useLoaderData,
+  useNavigate,
 } from 'react-router'
 import {ControlsThoughts} from '~/components/admin'
 import {ThoughtForm} from '~/components/forms/thoughts'
@@ -32,7 +33,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData) as Record<string, string>
 
-  const required = ['title', 'content']
+  const required = ['content']
 
   for (const field of required) {
     if (!data[field]) {
@@ -41,7 +42,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
     }
   }
 
-  const {title, content} = data
+  const {content} = data
 
   if (!['draft', 'publish'].includes(data.status)) {
     return {error: 'invalid status value'}
@@ -49,7 +50,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
   const status = data.status as 'draft' | 'publish' | 'archive'
   const tags = formData.getAll('tags') as string[]
-  const result = await tryCatch(createThought({title, content, status, tags}))
+  const result = await tryCatch(createThought({content, status, tags}))
 
   if (result.error) {
     console.error('error creating thought:', result.error)
@@ -68,6 +69,7 @@ const DashboardThoughtsCreate = () => {
   const [success, setSuccess] = useState<string | null>(null)
   const actionData = useActionData<typeof action>()
   const {data} = useLoaderData<typeof loader>()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (actionData?.error) {
@@ -76,6 +78,16 @@ const DashboardThoughtsCreate = () => {
       setSuccess(actionData.success)
     }
   }, [actionData])
+
+  useEffect(() => {
+    if (actionData?.success) {
+      const timeout = setTimeout(() => {
+        navigate('/admin/thoughts')
+      }, 1000)
+
+      return () => clearTimeout(timeout)
+    }
+  }, [actionData, navigate])
 
   const handleChange = () => setError(null)
 

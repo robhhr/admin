@@ -1,3 +1,4 @@
+import Markdown from 'react-markdown'
 import {Link, useFetcher} from 'react-router'
 import type {ThoughtProps} from '~/models/thoughts.server'
 
@@ -19,7 +20,7 @@ export const Thought = ({data}: Props) => {
 
   return (
     <div className="flex flex-col justify-between border-b px-1 py-2 last-of-type:border-0">
-      <p>{data.title}</p>
+      <Markdown>{data?.content}</Markdown>
 
       <div className="mt-2.5 flex justify-end">
         <Link

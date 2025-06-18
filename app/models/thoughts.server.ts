@@ -1,36 +1,42 @@
 import {query} from '../../db'
 import {tryCatch} from '~/utils'
 
-export type ThoughtStatus = 'draft' | 'publish' | 'archive'
+export type PostStatus = 'draft' | 'publish' | 'archive'
 
 export interface ThoughtProps {
   id: string
-  title: string
   content: string
   favorites: number
   is_pinned?: boolean
-  status: ThoughtStatus
+  status: PostStatus
   tags?: string[]
 }
 
+export interface Tag {
+  id: number
+  name: string
+}
+
+export interface ThoughtWithTags extends ThoughtProps {
+  tags: string[]
+}
+
 export async function createThought({
-  title,
   content,
   status,
   tags,
 }: Omit<ThoughtProps, 'id' | 'favorites'>) {
   const sql = `
     INSERT INTO thoughts (
-      title,
       content,
       status
     )
-    VALUES ($1, $2, $3)
+    VALUES ($1, $2)
     RETURNING id;
   `
 
   const thought = await tryCatch(
-    query<ThoughtProps>(sql, [title, content, status]),
+    query<ThoughtProps>(sql, [content, status]),
   )
 
   if (thought.error) {
@@ -56,11 +62,40 @@ export async function createThought({
   return thought.data[0]
 }
 
-export async function getThoughtsByStatusWithTags(status: ThoughtStatus[]) {
+export async function getThoughtByIdWithTags({id}: {id: string}) {
+  const sql = `
+    SELECT 
+      t.id,
+      t.content,
+      t.status,
+      t.is_pinned,
+      t.favorites,
+      t.created_at,
+      t.updated_at,
+      COALESCE(json_agg(
+        DISTINCT jsonb_build_object('id', tg.id, 'name', tg.name)
+      ) FILTER (WHERE tg.id IS NOT NULL), '[]') AS tags
+    FROM thoughts t
+    LEFT JOIN thought_tags tt ON t.id = tt.thought_id
+    LEFT JOIN tags tg ON tt.tag_id = tg.id
+    WHERE t.id = $1
+    GROUP BY t.id;
+  `
+
+  const result = await tryCatch(query<ThoughtWithTags>(sql, [id]))
+
+  if (result.error) {
+    console.error('error fetching thought:', result.error)
+    throw result.error
+  }
+
+  return result.data[0]
+}
+
+export async function getThoughtsByStatusWithTags(status: PostStatus[]) {
   const sql = `
       SELECT 
       t.id,
-      t.title,
       t.content,
       t.status,
       t.is_pinned,
