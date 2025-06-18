@@ -9,6 +9,37 @@ import {
 } from '~/models/projects.server'
 import {tryCatch} from '~/utils'
 
+export const loader = async () => {
+  const data = await tryCatch(getProjects())
+
+  if (data.error) {
+    console.error('error retrieving projects:', data.error)
+    return {error: data.error}
+  }
+
+  const grouped = {
+    projectsPublished: [] as Project[],
+    projectsDraft: [] as Project[],
+    projectsArchived: [] as Project[],
+  }
+
+  for (const project of data.data) {
+    switch (project.status) {
+      case 'publish':
+        grouped.projectsPublished.push(project)
+        break
+      case 'draft':
+        grouped.projectsDraft.push(project)
+        break
+      case 'archive':
+        grouped.projectsArchived.push(project)
+        break
+    }
+  }
+
+  return {data: grouped, error: null}
+}
+
 export const action = async ({request}: ActionFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
 
@@ -50,37 +81,6 @@ export const action = async ({request}: ActionFunctionArgs) => {
     default:
       return {error: 'invalid intent'}
   }
-}
-
-export const loader = async () => {
-  const data = await tryCatch(getProjects())
-
-  if (data.error) {
-    console.error('error retrieving projects:', data.error)
-    return {error: data.error}
-  }
-
-  const grouped = {
-    projectsPublished: [] as Project[],
-    projectsDraft: [] as Project[],
-    projectsArchived: [] as Project[],
-  }
-
-  for (const project of data.data) {
-    switch (project.status) {
-      case 'publish':
-        grouped.projectsPublished.push(project)
-        break
-      case 'draft':
-        grouped.projectsDraft.push(project)
-        break
-      case 'archive':
-        grouped.projectsArchived.push(project)
-        break
-    }
-  }
-
-  return {data: grouped, error: null}
 }
 
 const DashboardProjects = () => {
