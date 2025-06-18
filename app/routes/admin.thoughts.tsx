@@ -57,28 +57,26 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
   switch (intent) {
     case 'archive':
-      try {
-        const result = await archiveThought({id})
-        return {
-          success: 'thought archived',
-          result,
-        }
-      } catch (error) {
-        console.error('error archiving thought:', error)
+      const result = await tryCatch(archiveThought({id}))
+
+      if (result.error) {
+        console.error('error archiving thought:', result.error)
         return {error: 'error archiving thought'}
       }
 
-    case 'unarchive':
-      try {
-        const result = await unarchiveThought({id})
-        return {
-          success: 'thought unarchived',
-          result,
-        }
-      } catch (error) {
-        console.error('error unarchiving thought:', error)
-        return {error: 'error unarchiving thought'}
+      return {
+        success: 'thought archived',
+        result,
       }
+
+    case 'unarchive':
+      const resultUnArchive = await tryCatch(unarchiveThought({id}))
+
+      if (resultUnArchive.error) {
+        console.error('error unarchiving thought:', resultUnArchive.error)
+      }
+
+      return {success: 'thought unarchived', resultUnArchive}
 
     default:
       return {error: 'invalid intent'}

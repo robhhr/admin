@@ -35,9 +35,7 @@ export async function createThought({
     RETURNING id;
   `
 
-  const thought = await tryCatch(
-    query<ThoughtProps>(sql, [content, status]),
-  )
+  const thought = await tryCatch(query<ThoughtProps>(sql, [content, status]))
 
   if (thought.error) {
     console.error('error inserting thought:', thought.error)
@@ -130,14 +128,14 @@ export async function archiveThought({id}: {id: string}) {
     WHERE id = $1
   `
 
-  try {
-    const result = await query<ThoughtProps>(sql, [id])
+  const result = await tryCatch(query<ThoughtProps>(sql, [id]))
 
-    console.log(`archived thought record: ${JSON.stringify(result)}`)
-  } catch (error) {
-    console.error('error archiving thought:', error)
-    throw error
+  if (result.error) {
+    console.error('error archiving thought:', result.error)
+    throw result.error
   }
+
+  return result.data[0]
 }
 
 export async function unarchiveThought({id}: {id: string}) {
@@ -147,12 +145,12 @@ export async function unarchiveThought({id}: {id: string}) {
     WHERE id = $1
   `
 
-  try {
-    const result = await query<ThoughtProps>(sql, [id])
+  const result = await tryCatch(query<ThoughtProps>(sql, [id]))
 
-    console.log(`unarchived thought record: ${JSON.stringify(result)}`)
-  } catch (error) {
-    console.error('error archiving thought:', error)
-    throw error
+  if (result.error) {
+    console.error('error archiving thought:', result.error)
+    throw result.error
   }
+
+  return result.data[0]
 }
