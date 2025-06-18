@@ -52,6 +52,7 @@ CREATE TABLE projects (
   status VARCHAR(30) NOT NULL,
   title VARCHAR(255) NOT NULL UNIQUE,
   content TEXT NOT NULL,
+  slug TEXT NOT NULL,
   metadata JSONB DEFAULT NULL,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
