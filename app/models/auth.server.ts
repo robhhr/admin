@@ -140,3 +140,26 @@ export async function insertFingerprint({
     throw error
   }
 }
+
+export async function updatePassword({
+  password,
+}: {
+  password: string
+}): Promise<void> {
+  const sql = `
+    UPDATE users
+    SET password = $1
+    WHERE username = 'sroot'
+  `
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const result = await query<User>(sql, [hashedPassword])
+
+    console.log(`updated password record: ${JSON.stringify(result)}`)
+  } catch (error) {
+    console.error('error updating password:', error)
+    throw error
+  }
+}
