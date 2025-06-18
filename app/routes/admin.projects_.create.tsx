@@ -10,6 +10,7 @@ import {ProjectForm} from '~/components/forms/projects'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {isUserAuthenticated} from '~/models/auth.server'
 import {createProject} from '~/models/projects.server'
+import {tryCatch} from '~/utils'
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
@@ -28,15 +29,16 @@ export const action = async ({request}: ActionFunctionArgs) => {
   if (!title) return {error: 'title required'}
   if (!content) return {error: 'content required'}
 
-  try {
-    const result = await createProject({status, title, content, meta})
-    return {
-      success: 'project created',
-      result,
-    }
-  } catch (error) {
-    console.error('error inserting project:', error)
+  const data = await tryCatch(createProject({status, title, content, meta}))
+
+  if (data.error) {
+    console.error('error creating project:', data.error)
     return {error: 'error creating project'}
+  }
+
+  return {
+    success: 'project created',
+    data,
   }
 }
 

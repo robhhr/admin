@@ -56,7 +56,13 @@ export const action = async ({request}: ActionFunctionArgs) => {
   switch (intent) {
     case 'archive':
       try {
-        const result = await archiveProject({id: projectId})
+        const result = await tryCatch(archiveProject({id: projectId}))
+
+        if (result.error) {
+          console.error('error archiving project:', result.error)
+          return {error: 'error archiving project'}
+        }
+
         return {
           success: 'project archived',
           result,
@@ -68,7 +74,13 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
     case 'unarchive':
       try {
-        const result = await unarchiveProject({id: projectId})
+        const result = await tryCatch(unarchiveProject({id: projectId}))
+
+        if (result.error) {
+          console.error('error unarchiving project:', result.error)
+          return {error: 'error unarchiving project'}
+        }
+
         return {
           success: 'project unarchived',
           result,

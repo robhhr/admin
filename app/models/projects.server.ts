@@ -48,22 +48,22 @@ export async function createProject({
     RETURNING id;
   `
 
-  try {
-    const project = await query<Project>(sql, [
+  const project = await tryCatch(
+    query<Project>(sql, [
       status,
       title,
       content,
       meta,
       slugify(title, {lower: true, strict: true}),
-    ])
+    ]),
+  )
 
-    console.log(
-      `inserted project titled ${title} and record: ${JSON.stringify(project)}`,
-    )
-  } catch (error) {
-    console.error('error inserting print:', error)
-    throw error
+  if (project.error) {
+    console.error('error inserting print:', project.error)
+    throw project.error
   }
+
+  return project.data[0].id
 }
 
 export async function getProjectById({id}: {id: string}) {
@@ -71,13 +71,14 @@ export async function getProjectById({id}: {id: string}) {
     SELECT * FROM projects WHERE id = $1;
   `
 
-  try {
-    const project = await query<ProjectEdit>(sql, [id])
-    return project[0]
-  } catch (error) {
-    console.error('error retrieving project:', error)
-    throw error
+  const project = await tryCatch(query<ProjectEdit>(sql, [id]))
+
+  if (project.error) {
+    console.error('error retrieving project:', project.error)
+    throw project.error
   }
+
+  return project.data[0]
 }
 
 export async function updateProject({
@@ -93,14 +94,16 @@ export async function updateProject({
     WHERE id = $1
   `
 
-  try {
-    await query<Project>(sql, [id, status, title, content, meta])
+  const result = await tryCatch(
+    query<Project>(sql, [id, status, title, content, meta]),
+  )
 
-    console.log(`updated project titled ${title} and record: ${id}`)
-  } catch (error) {
-    console.error('error updating project:', error)
-    throw error
+  if (result.error) {
+    console.error('error updating project:', result.error)
+    throw result.error
   }
+
+  return result.data[0]
 }
 
 export async function getProjects() {
@@ -125,14 +128,14 @@ export async function archiveProject({id}: {id: string}) {
     WHERE id = $1
   `
 
-  try {
-    const result = await query<Project>(sql, [id])
+  const result = await tryCatch(query<Project>(sql, [id]))
 
-    console.log(`archived project record: ${JSON.stringify(result)}`)
-  } catch (error) {
-    console.error('error archiving project:', error)
-    throw error
+  if (result.error) {
+    console.error('error archiving project:', result.error)
+    throw result.error
   }
+
+  return result.data[0]
 }
 
 export async function unarchiveProject({id}: {id: string}) {
@@ -142,12 +145,12 @@ export async function unarchiveProject({id}: {id: string}) {
     WHERE id = $1
   `
 
-  try {
-    const result = await query<Project>(sql, [id])
+  const result = await tryCatch(query<Project>(sql, [id]))
 
-    console.log(`unarchived project record: ${JSON.stringify(result)}`)
-  } catch (error) {
-    console.error('error archiving project:', error)
-    throw error
+  if (result.error) {
+    console.error('error archiving project:', result.error)
+    throw result.error
   }
+
+  return result.data[0]
 }
