@@ -28,9 +28,7 @@ export async function createNote({
     RETURNING id;
   `
 
-  const note = await tryCatch(
-    query<NoteProps>(sql, [title, content, status]),
-  )
+  const note = await tryCatch(query<NoteProps>(sql, [title, content, status]))
 
   if (note.error) {
     console.error('error inserting note:', note.error)
@@ -40,23 +38,19 @@ export async function createNote({
   return note.data[0]
 }
 
-export async function getNotesByStatus({
-  status,
-}: {
-  status: NoteProps['status']
-}) {
+export async function getNotes() {
   const sql = `
-    SELECT id, title, status FROM notes WHERE status = $1 ORDER BY updated_at DESC;
+    SELECT id, title, status FROM notes ORDER BY updated_at DESC;
   `
 
-  try {
-    const notes = await query<NoteProps>(sql, [status])
+  const notes = await tryCatch(query<NoteProps>(sql))
 
-    return notes
-  } catch (error) {
-    console.error('error getting notes:', error)
-    throw error
+  if (notes.error) {
+    console.error('error getting notes:', notes.error)
+    throw notes.error
   }
+
+  return notes.data
 }
 
 export async function archiveNote({id}: {id: string}) {
@@ -66,14 +60,14 @@ export async function archiveNote({id}: {id: string}) {
     WHERE id = $1
   `
 
-  try {
-    const result = await query<NoteProps>(sql, [id])
+  const result = await tryCatch(query<NoteProps>(sql, [id]))
 
-    console.log(`archived note record: ${JSON.stringify(result)}`)
-  } catch (error) {
-    console.error('error archiving note:', error)
-    throw error
+  if (result.error) {
+    console.error('error archiving note:', result.error)
+    throw result.error
   }
+
+  return result.data[0]
 }
 
 export async function unarchiveNote({id}: {id: string}) {
@@ -83,12 +77,12 @@ export async function unarchiveNote({id}: {id: string}) {
     WHERE id = $1
   `
 
-  try {
-    const result = await query<NoteProps>(sql, [id])
+  const result = await tryCatch(query<NoteProps>(sql, [id]))
 
-    console.log(`unarchived note record: ${JSON.stringify(result)}`)
-  } catch (error) {
-    console.error('error archiving note:', error)
-    throw error
+  if (result.error) {
+    console.error('error archiving note:', result.error)
+    throw result.error
   }
+
+  return result.data[0]
 }

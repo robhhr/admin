@@ -2,24 +2,42 @@ import {type ActionFunctionArgs, redirect, useLoaderData} from 'react-router'
 import {ControlsNotes, NoteListing} from '~/components/admin'
 import {isUserAuthenticated} from '~/models/auth.server'
 import {
+  type NoteProps,
   archiveNote,
-  getNotesByStatus,
+  getNotes,
   unarchiveNote,
 } from '~/models/notes.server'
+import {tryCatch} from '~/utils'
 
 export const loader = async () => {
-  const [notesPublished, notesDraft, notesArchived] = await Promise.all([
-    getNotesByStatus({status: 'publish'}),
-    getNotesByStatus({status: 'draft'}),
-    getNotesByStatus({status: 'archive'}),
-  ])
+  const data = await tryCatch(getNotes())
 
-  if (!notesPublished || !notesDraft || !notesArchived) {
-    console.error('error retrieving notes:', notesPublished)
-    return {error: notesPublished}
+  if (data.error) {
+    console.error('error retrieving notes:', data.error)
+    return {error: data.error}
   }
 
-  return {notesArchived, notesDraft, notesPublished}
+  const grouped = {
+    notesPublished: [] as NoteProps[],
+    notesDraft: [] as NoteProps[],
+    notesArchived: [] as NoteProps[],
+  }
+
+  for (const note of data.data) {
+    switch (note.status) {
+      case 'publish':
+        grouped.notesPublished.push(note)
+        break
+      case 'draft':
+        grouped.notesDraft.push(note)
+        break
+      case 'archive':
+        grouped.notesArchived.push(note)
+        break
+    }
+  }
+
+  return {data: grouped, error: null}
 }
 
 export const action = async ({request}: ActionFunctionArgs) => {
@@ -37,27 +55,29 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
   switch (intent) {
     case 'archive':
-      try {
-        const result = await archiveNote({id})
-        return {
-          success: 'note archived',
-          result,
-        }
-      } catch (error) {
-        console.error('error archiving note:', error)
+      const archive = await tryCatch(archiveNote({id}))
+
+      if (archive.error) {
+        console.error('error archiving note:', archive.error)
         return {error: 'error archiving note'}
       }
 
+      return {
+        success: 'note archived',
+        result: archive,
+      }
+
     case 'unarchive':
-      try {
-        const result = await unarchiveNote({id})
-        return {
-          success: 'note unarchived',
-          result,
-        }
-      } catch (error) {
-        console.error('error unarchiving note:', error)
+      const unarchive = await tryCatch(unarchiveNote({id}))
+
+      if (unarchive.error) {
+        console.error('error unarchiving note:', unarchive.error)
         return {error: 'error unarchiving note'}
+      }
+
+      return {
+        success: 'note unarchived',
+        result: unarchive,
       }
 
     default:
@@ -66,23 +86,22 @@ export const action = async ({request}: ActionFunctionArgs) => {
 }
 
 const AdminNotes = () => {
-  const {notesArchived, notesDraft, notesPublished} =
-    useLoaderData<typeof loader>()
+  const {data} = useLoaderData<typeof loader>()
 
   return (
     <>
       <ControlsNotes />
 
-      {notesDraft && notesDraft.length > 0 && (
-        <NoteListing title="draft" data={notesDraft} />
+      {data && data.notesDraft.length > 0 && (
+        <NoteListing title="draft" data={data.notesDraft} />
       )}
 
-      {notesPublished && notesPublished.length > 0 && (
-        <NoteListing title="published" data={notesPublished} />
+      {data && data.notesPublished.length > 0 && (
+        <NoteListing title="published" data={data.notesPublished} />
       )}
 
-      {notesArchived && notesArchived.length > 0 && (
-        <NoteListing title="archived" data={notesArchived} />
+      {data && data.notesArchived.length > 0 && (
+        <NoteListing title="archived" data={data.notesArchived} />
       )}
     </>
   )
