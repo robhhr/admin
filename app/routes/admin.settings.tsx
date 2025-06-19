@@ -4,11 +4,13 @@ import {
   Form,
   redirect,
   useActionData,
+  useNavigate,
 } from 'react-router'
 import {Button} from '~/components/modules'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {InputText} from '~/components/ui/admin/input-text'
 import {isUserAuthenticated, updatePassword} from '~/models/auth.server'
+import {tryCatch} from '~/utils'
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
@@ -29,14 +31,15 @@ export const action = async ({request}: ActionFunctionArgs) => {
     return {error: 'passwords do not match'}
   }
 
-  try {
-    await updatePassword({password: newPassword})
-    return {
-      success: 'password updated',
-    }
-  } catch (error) {
-    console.error('error updating password:', error)
+  const result = await tryCatch(updatePassword({password: newPassword}))
+
+  if (result.error) {
+    console.error('error updating password:', result.error)
     return {error: 'error updating password'}
+  }
+
+  return {
+    success: 'password updated',
   }
 }
 
@@ -44,6 +47,7 @@ const AdminSettings = () => {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const actionData = useActionData<typeof action>()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (actionData?.error) {
@@ -53,6 +57,18 @@ const AdminSettings = () => {
     }
   }, [actionData])
 
+  useEffect(() => {
+    if (actionData?.success) {
+      const timeout = setTimeout(() => {
+        navigate('/admin/projects')
+      }, 1000)
+
+      return () => clearTimeout(timeout)
+    }
+  }, [actionData, navigate])
+
+  const handleChange = () => setError(null)
+
   return (
     <div>
       <Form method="post" className="mt-4">
@@ -60,31 +76,17 @@ const AdminSettings = () => {
           <label htmlFor="title" className="mb-1.5">
             new password
           </label>
-          <InputText
-            name="new-password"
-            // onChange={handleChange}
-            // defaultValue={data ? data.title : ''}
-          />
+          <InputText name="new-password" onChange={handleChange} />
         </div>
 
         <div className="mt-4 flex flex-col">
           <label htmlFor="title" className="mb-1.5">
             confirm new password
           </label>
-          <InputText
-            name="confirm-new-password"
-            // onChange={handleChange}
-            // defaultValue={data ? data.title : ''}
-          />
+          <InputText name="confirm-new-password" onChange={handleChange} />
         </div>
 
-        <Button
-          // disabled={navigation.state === 'submitting'}
-          // disabled={navigation.state !== 'idle'}
-          className="mt-7"
-          intent="admin"
-          type="submit"
-        >
+        <Button className="mt-7" intent="admin" type="submit">
           update
         </Button>
       </Form>
