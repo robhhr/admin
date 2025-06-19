@@ -53,42 +53,29 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
   if (!projectId) return {error: 'project id required'}
 
+  const performAction = async (
+    action: (args: {id: string}) => Promise<unknown>,
+    label: string,
+  ) => {
+    const result = await tryCatch(action({id: projectId}))
+
+    if (result.error) {
+      console.error(`error with ${label} project:`, result.error)
+      return {error: `error with ${label} project`}
+    }
+
+    return {
+      success: `project ${label}`,
+      result,
+    }
+  }
+
   switch (intent) {
     case 'archive':
-      try {
-        const result = await tryCatch(archiveProject({id: projectId}))
-
-        if (result.error) {
-          console.error('error archiving project:', result.error)
-          return {error: 'error archiving project'}
-        }
-
-        return {
-          success: 'project archived',
-          result,
-        }
-      } catch (error) {
-        console.error('error archiving project:', error)
-        return {error: 'error archiving project'}
-      }
+      return await performAction(archiveProject, 'archiving')
 
     case 'unarchive':
-      try {
-        const result = await tryCatch(unarchiveProject({id: projectId}))
-
-        if (result.error) {
-          console.error('error unarchiving project:', result.error)
-          return {error: 'error unarchiving project'}
-        }
-
-        return {
-          success: 'project unarchived',
-          result,
-        }
-      } catch (error) {
-        console.error('error unarchiving project:', error)
-        return {error: 'error unarchiving project'}
-      }
+      return await performAction(unarchiveProject, 'unarchiving')
 
     default:
       return {error: 'invalid intent'}
