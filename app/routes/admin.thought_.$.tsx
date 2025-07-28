@@ -1,12 +1,15 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
   redirect,
+  useActionData,
   useLoaderData,
+  useNavigate,
 } from 'react-router'
 import {ControlsThoughts} from '~/components/admin'
 import {ThoughtForm} from '~/components/forms/thoughts'
+import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {isUserAuthenticated} from '~/models/auth.server'
 import {getThoughtByIdWithTags, updateThought} from '~/models/thoughts.server'
 import {tryCatch, validateUUID} from '~/utils'
@@ -76,14 +79,39 @@ export const action = async ({params, request}: ActionFunctionArgs) => {
 const DashboardThoughtsEditView = () => {
   const {thought} = useLoaderData<typeof loader>()
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const actionData = useActionData<typeof action>()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (actionData?.error) {
+      setError(actionData.error)
+    } else if (actionData?.success) {
+      setSuccess(actionData.success)
+    }
+  }, [actionData])
 
   const handleChange = () => setError(null)
+
+  useEffect(() => {
+    if (actionData?.success) {
+      const timeout = setTimeout(() => {
+        navigate('/admin/thoughts')
+      }, 1000)
+
+      return () => clearTimeout(timeout)
+    }
+  }, [actionData, navigate])
 
   return (
     <>
       <ControlsThoughts />
 
       <ThoughtForm handleChange={handleChange} data={thought} />
+
+      <FeedbackDialog
+        actionData={error ? {error} : success ? {success} : undefined}
+      />
     </>
   )
 }
