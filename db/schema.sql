@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS fingerprints;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS tags;
 
 -- roles
 CREATE TABLE roles (
@@ -56,5 +57,17 @@ CREATE TABLE projects (
   metadata JSONB DEFAULT NULL,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- global tags
+CREATE TABLE IF NOT EXISTS tags (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS projects_tags (
+  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  tag_id INT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+  PRIMARY KEY (project_id, tag_id)
 );
 
