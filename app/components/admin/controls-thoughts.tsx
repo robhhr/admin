@@ -24,15 +24,6 @@ export const ControlsThoughts = () => {
           </Button>
         </li>
       </div>
-
-      <li className="mt-3">
-        <Button
-          disabled={location.pathname === '/admin/thoughts/tags'}
-          to="/admin/thoughts/tags"
-        >
-          tags
-        </Button>
-      </li>
     </ul>
   )
 }

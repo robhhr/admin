@@ -108,8 +108,6 @@ const AdminThoughtsTags = () => {
 
   return (
     <>
-      <ControlsThoughts />
-
       <Form method="post" className="mt-4 flex flex-col sm:flex-row">
         <input type="hidden" name="action" value="create" />
 
