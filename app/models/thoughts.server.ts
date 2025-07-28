@@ -6,26 +6,20 @@ export type PostStatus = 'draft' | 'publish' | 'archive'
 export interface ThoughtProps {
   id: string
   content: string
-  favorites: number
+  favorites?: number
   is_pinned?: boolean
   status: PostStatus
-  tags?: string[]
-}
-
-export interface Tag {
-  id: number
-  name: string
 }
 
 export interface ThoughtWithTags extends ThoughtProps {
-  tags: string[]
+  tags?: number[]
 }
 
 export async function createThought({
   content,
   status,
   tags,
-}: Omit<ThoughtProps, 'id' | 'favorites'>) {
+}: Omit<ThoughtWithTags, 'id' | 'favorites'>) {
   const sql = `
     INSERT INTO thoughts (
       content,
@@ -60,9 +54,55 @@ export async function createThought({
   return thought.data[0]
 }
 
+export async function updateThought({
+  id,
+  status,
+  content,
+  is_pinned,
+  tags,
+}: ThoughtWithTags) {
+  await query('BEGIN');
+
+  const sql = `
+    UPDATE thoughts
+    SET status = $2, content = $3, is_pinned = $4, updated_at = current_timestamp
+    WHERE id = $1
+  `
+
+  const result = await tryCatch(
+    query<ThoughtWithTags>(sql, [id, status, content, is_pinned]),
+  )
+
+  if (result.error) {
+    console.error('error updating project:', result.error)
+    throw result.error
+  }
+
+  const deleteTagsSql = `DELETE FROM thought_tags WHERE thought_id = $1;`
+
+  const deleteTags = await tryCatch(query(deleteTagsSql, [id]))
+
+  if (deleteTags.error) {
+    console.error('error deleting thought tags:', deleteTags.error)
+    throw deleteTags.error
+  }
+
+  if (tags && tags?.length > 0) {
+    const insertTagsSql = `
+        INSERT INTO thought_tags (thought_id, tag_id)
+        SELECT $1, unnest($2::int[]);
+      `
+    await tryCatch(query(insertTagsSql, [id, tags]))
+  }
+
+  await query('COMMIT');
+
+  return { success: true };
+}
+
 export async function getThoughtByIdWithTags({id}: {id: string}) {
   const sql = `
-    SELECT 
+    SELECT
       t.id,
       t.content,
       t.status,
@@ -70,15 +110,28 @@ export async function getThoughtByIdWithTags({id}: {id: string}) {
       t.favorites,
       t.created_at,
       t.updated_at,
-      COALESCE(json_agg(
-        DISTINCT jsonb_build_object('id', tg.id, 'name', tg.name)
-      ) FILTER (WHERE tg.id IS NOT NULL), '[]') AS tags
-    FROM thoughts t
-    LEFT JOIN thought_tags tt ON t.id = tt.thought_id
-    LEFT JOIN tags tg ON tt.tag_id = tg.id
-    WHERE t.id = $1
-    GROUP BY t.id;
-  `
+      (
+        SELECT
+        COALESCE(json_agg(
+          jsonb_build_object(
+            'id', all_tags.id,
+            'name', all_tags.name,
+            'is_selected', EXISTS (
+              SELECT 1
+              FROM thought_tags tt
+              WHERE tt.tag_id = all_tags.id AND tt.thought_id = t.id
+            )
+          )
+        ), '[]')
+        FROM tags AS all_tags
+      ) AS tags
+    FROM
+      thoughts t
+    WHERE
+      t.id = $1
+    GROUP BY
+      t.id;
+    `
 
   const result = await tryCatch(query<ThoughtWithTags>(sql, [id]))
 

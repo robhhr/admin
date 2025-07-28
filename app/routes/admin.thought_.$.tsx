@@ -1,8 +1,14 @@
 import {useState} from 'react'
-import {type LoaderFunctionArgs, useLoaderData} from 'react-router'
+import {
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+  redirect,
+  useLoaderData,
+} from 'react-router'
 import {ControlsThoughts} from '~/components/admin'
 import {ThoughtForm} from '~/components/forms/thoughts'
-import {getThoughtByIdWithTags} from '~/models/thoughts.server'
+import {isUserAuthenticated} from '~/models/auth.server'
+import {getThoughtByIdWithTags, updateThought} from '~/models/thoughts.server'
 import {tryCatch, validateUUID} from '~/utils'
 
 export const loader = async ({params}: LoaderFunctionArgs) => {
@@ -19,6 +25,52 @@ export const loader = async ({params}: LoaderFunctionArgs) => {
   }
 
   return {thought: thought.data}
+}
+
+export const action = async ({params, request}: ActionFunctionArgs) => {
+  const isAuth = await isUserAuthenticated(request)
+
+  if (!isAuth) return redirect('/login')
+
+  const id = params['*']
+
+  if (!id || !validateUUID(id)) {
+    console.error('invalid thought id:', id)
+    return {error: 'invalid thought id'}
+  }
+
+  const formData = await request.formData()
+  const data = Object.fromEntries(formData) as Record<string, string>
+
+  const required = ['content']
+
+  for (const field of required) {
+    if (!data[field]) {
+      console.error('missing required field:', field)
+      return {error: `${field} required`}
+    }
+  }
+
+  const {content} = data
+
+  if (!['draft', 'publish'].includes(data.status)) {
+    return {error: 'invalid status value'}
+  }
+
+  const status = data.status as 'draft' | 'publish' | 'archive'
+  const tags = formData.getAll('tags').map(id => parseInt(id as string, 10))
+  const result = await tryCatch(updateThought({id, content, status, tags}))
+
+  if (result.error) {
+    console.error('error updating thought:', result.error)
+    return {error: 'error updating thought'}
+  }
+
+  return {
+    success: 'thought updated',
+    result,
+    error: null,
+  }
 }
 
 const DashboardThoughtsEditView = () => {
