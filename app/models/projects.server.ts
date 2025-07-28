@@ -83,10 +83,38 @@ export async function createProject({
   return {success: true}
 }
 
-export async function getProjectById({id}: {id: string}) {
+export async function getProjectByIdWithTags({id}: {id: string}) {
   const sql = `
-    SELECT * FROM projects WHERE id = $1;
-  `
+    SELECT
+      p.id,
+      p.title,
+      p.content,
+      p.status,
+      p.metadata,
+      p.created_at,
+      p.updated_at,
+      (
+        SELECT
+        COALESCE(json_agg(
+          jsonb_build_object(
+            'id', all_tags.id,
+            'name', all_tags.name,
+            'is_selected', EXISTS (
+              SELECT 1
+              FROM projects_tags pt
+              WHERE pt.tag_id = all_tags.id AND pt.project_id = p.id
+            )
+          )
+        ), '[]')
+        FROM tags AS all_tags
+      ) AS tags
+    FROM
+      projects p
+    WHERE
+      p.id = $1
+    GROUP BY
+      p.id;
+    `
 
   const project = await tryCatch(query<ProjectEdit>(sql, [id]))
 
@@ -104,6 +132,7 @@ export async function updateProject({
   title,
   content,
   meta,
+  tags,
 }: Project) {
   const sql = `
     UPDATE projects
@@ -120,7 +149,24 @@ export async function updateProject({
     throw result.error
   }
 
-  return result.data[0]
+  const deleteTagsSql = `DELETE FROM projects_tags WHERE project_id = $1;`
+
+  const deleteTags = await tryCatch(query(deleteTagsSql, [id]))
+
+  if (deleteTags.error) {
+    console.error('error deleting project tags:', deleteTags.error)
+    throw deleteTags.error
+  }
+
+  if (tags && tags?.length > 0) {
+    const insertTagsSql = `
+        INSERT INTO projects_tags (project_id, tag_id)
+        SELECT $1, unnest($2::int[]);
+      `
+    await tryCatch(query(insertTagsSql, [id, tags]))
+  }
+
+  return {success: true}
 }
 
 export async function getProjects() {

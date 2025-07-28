@@ -11,7 +11,7 @@ import {ControlsProjects} from '~/components/admin'
 import {ProjectForm} from '~/components/forms/projects'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {isUserAuthenticated} from '~/models/auth.server'
-import {getProjectById, updateProject} from '~/models/projects.server'
+import {getProjectByIdWithTags, updateProject} from '~/models/projects.server'
 import {tryCatch, validateUUID} from '~/utils'
 
 export const loader = async ({params}: LoaderFunctionArgs) => {
@@ -20,7 +20,7 @@ export const loader = async ({params}: LoaderFunctionArgs) => {
 
   if (!p || !isValid) throw new Response('not found', {status: 404})
 
-  const project = await tryCatch(getProjectById({id: p}))
+  const project = await tryCatch(getProjectByIdWithTags({id: p}))
 
   if (project.error) {
     console.error('error retrieving project:', project.error)
@@ -59,9 +59,10 @@ export const action = async ({params, request}: ActionFunctionArgs) => {
   }
 
   const status = data.status as 'draft' | 'publish' | 'archive'
+  const tags = formData.getAll('tags').map(id => parseInt(id as string, 10))
 
   const result = await tryCatch(
-    updateProject({id: p, status, title, content, meta}),
+    updateProject({id: p, status, title, content, meta, tags}),
   )
 
   if (result.error) {

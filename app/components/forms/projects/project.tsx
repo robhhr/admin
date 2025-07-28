@@ -26,7 +26,6 @@ export const ProjectForm = ({
   const [selected, setSelected] = useState(
     projectData ? projectData.status.toString() : 'draft',
   )
-
   const dataTags = projectData ? projectData.tags : tags.data
 
   return (
