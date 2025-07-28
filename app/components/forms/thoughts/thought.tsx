@@ -1,15 +1,15 @@
 import {useState} from 'react'
 import {Form, useNavigation} from 'react-router'
+import {TagBox} from '../tags'
 import {Button} from '~/components/modules'
 import {Editor} from '~/components/ui/admin/editor'
 import {Select} from '~/components/ui/admin/select'
-import type {TagProps} from '~/models/tags'
-import type {ThoughtProps} from '~/models/thoughts.server'
+import type {ThoughtWithTags} from '~/models/thoughts.server'
 
 interface ThoughtFormProps {
   handleChange?: () => void
-  data?: ThoughtProps
-  tags?: TagProps[]
+  data?: ThoughtWithTags
+  tags?: {id: number; name: string}[]
 }
 
 export const ThoughtForm = ({handleChange, data, tags}: ThoughtFormProps) => {
@@ -17,9 +17,7 @@ export const ThoughtForm = ({handleChange, data, tags}: ThoughtFormProps) => {
   const [selected, setSelected] = useState(
     data ? data.status.toString() : 'draft',
   )
-  const isCreate = data === undefined
-  const arr = isCreate ? tags : data.tags
-  // const fetcher = useFetcher()
+  const dataTags = data ? data.tags : tags
 
   return (
     <Form method="post" className="mt-4">
@@ -49,26 +47,7 @@ export const ThoughtForm = ({handleChange, data, tags}: ThoughtFormProps) => {
         <Editor data={data && data.content} />
       </div>
 
-      {/*TODO: tags*/}
-      <div>
-        {arr && arr.length > 0 && (
-          <label htmlFor="tags" className="mb-1.5">
-            tags
-          </label>
-        )}
-
-        {arr?.map((tag, i) => (
-          <div key={i} className="flex items-center">
-            <input
-              type="checkbox"
-              name="tags"
-              value={tag.id}
-              // defaultChecked={tags?.includes(tag.id)}
-            />
-            <span className="ml-2">{tag.name}</span>
-          </div>
-        ))}
-      </div>
+      <TagBox dataTags={dataTags} />
 
       <Button
         // disabled={navigation.state === 'submitting'}
