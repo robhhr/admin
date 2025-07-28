@@ -12,6 +12,7 @@ export interface Project {
   title: string
   content: string
   meta: string
+  tags?: number[]
 }
 
 export interface MetaProps {
@@ -34,6 +35,7 @@ export async function createProject({
   title,
   content,
   meta,
+  tags,
 }: Omit<Project, 'id'>) {
   const sql = `
     INSERT INTO projects (
@@ -63,7 +65,22 @@ export async function createProject({
     throw project.error
   }
 
-  return project.data[0].id
+  const projectId = project.data[0].id
+
+  if (tags && tags.length > 0) {
+    const valueTuples = tags.map((_, index) => `($1, $${index + 2})`).join(', ')
+    const values = [projectId, ...tags.map(Number)]
+
+    const bulkInsertSql = `
+    INSERT INTO projects_tags (project_id, tag_id)
+    VALUES ${valueTuples}
+    ON CONFLICT DO NOTHING;
+  `
+
+    await tryCatch(query(bulkInsertSql, values))
+  }
+
+  return {success: true}
 }
 
 export async function getProjectById({id}: {id: string}) {

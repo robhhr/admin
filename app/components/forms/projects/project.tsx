@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import {Form, useNavigation} from 'react-router'
+import {TagBox} from '../tags'
 import '@mdxeditor/editor/style.css'
 import {Button} from '~/components/modules'
 import {Editor} from '~/components/ui/admin/editor'
@@ -12,17 +13,21 @@ interface ProjectFormProps {
   handleChange: () => void
   setError: () => void
   projectData?: ProjectEdit
+  tags?: {id: number; name: string}[]
 }
 
 export const ProjectForm = ({
   handleChange,
   setError,
   projectData,
+  tags,
 }: ProjectFormProps) => {
   const navigation = useNavigation()
   const [selected, setSelected] = useState(
     projectData ? projectData.status.toString() : 'draft',
   )
+
+  const dataTags = projectData ? projectData.tags : tags.data
 
   return (
     <Form method="post" className="mt-4">
@@ -69,6 +74,10 @@ export const ProjectForm = ({
 
       <div className="mt-2 flex flex-col">
         <MetaControls metadata={projectData && projectData.metadata} />
+      </div>
+
+      <div className="mt-2 flex flex-col">
+        <TagBox dataTags={dataTags} />
       </div>
 
       <Button

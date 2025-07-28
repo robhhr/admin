@@ -3,6 +3,7 @@ import {
   type ActionFunctionArgs,
   redirect,
   useActionData,
+  useLoaderData,
   useNavigate,
 } from 'react-router'
 import {ControlsProjects} from '~/components/admin'
@@ -10,7 +11,19 @@ import {ProjectForm} from '~/components/forms/projects'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {isUserAuthenticated} from '~/models/auth.server'
 import {createProject} from '~/models/projects.server'
+import {getTags} from '~/models/tags'
 import {tryCatch} from '~/utils'
+
+export const loader = async () => {
+  const tags = await tryCatch(getTags())
+
+  if (tags.error) {
+    console.error('error retrieving tags:', tags.error)
+    return {error: tags.error}
+  }
+
+  return {error: null, data: tags.data}
+}
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
@@ -29,7 +42,8 @@ export const action = async ({request}: ActionFunctionArgs) => {
   if (!title) return {error: 'title required'}
   if (!content) return {error: 'content required'}
 
-  const data = await tryCatch(createProject({status, title, content, meta}))
+  const tags = body.getAll('tags').map(id => parseInt(id as string, 10))
+  const data = await tryCatch(createProject({status, title, content, meta, tags}))
 
   if (data.error) {
     console.error('error creating project:', data.error)
@@ -45,6 +59,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
 const DashboardProjectsCreate = () => {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const tags = useLoaderData<typeof loader>()
   const actionData = useActionData<typeof action>()
   const navigate = useNavigate()
 
@@ -72,7 +87,7 @@ const DashboardProjectsCreate = () => {
     <>
       <ControlsProjects />
 
-      <ProjectForm handleChange={handleChange} setError={() => setError} />
+      <ProjectForm handleChange={handleChange} setError={() => setError} tags={tags} />
 
       <FeedbackDialog
         actionData={error ? {error} : success ? {success} : undefined}
