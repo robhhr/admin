@@ -6,6 +6,10 @@ export interface TagProps {
   name: string
 }
 
+export interface TagPropsWithStatus extends TagProps {
+  is_selected: boolean  
+}
+
 export async function createTag({name}: {name: string}) {
   const sql = `
     INSERT INTO tags (name)
