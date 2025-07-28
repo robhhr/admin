@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import {
-  type ActionFunctionArgs,
+    type ActionFunctionArgs,
+  type LoaderFunctionArgs,
   redirect,
   useActionData,
   useLoaderData,
@@ -9,31 +10,40 @@ import {
 import {ControlsNotes} from '~/components/admin'
 import {NoteForm} from '~/components/forms/notes'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
-import {isUserAuthenticated} from '~/models/auth.server'
-import {createNote} from '~/models/notes.server'
-import {getTags} from '~/models/tags'
-import {tryCatch} from '~/utils'
+import { isUserAuthenticated } from '~/models/auth.server'
+import {getNoteByIdWithTags, updateNote} from '~/models/notes.server'
+import {tryCatch, validateUUID} from '~/utils'
 
-export const loader = async () => {
-  const tags = await tryCatch(getTags())
+export const loader = async ({params}: LoaderFunctionArgs) => {
+  const p = params['*']
+  const isValid = validateUUID(p)
 
-  if (tags.error) {
-    console.error('error retrieving tags:', tags.error)
-    return {error: tags.error}
+  if (!p || !isValid) throw new Response('not found', {status: 404})
+
+  const note = await tryCatch(getNoteByIdWithTags({id: p}))
+
+  if (note.error) {
+    console.error('error retrieving note:', note.error)
+    return {error: note.error}
   }
 
-  return {error: null, data: tags.data}
+  return {note: note.data}
 }
 
-export const action = async ({request}: ActionFunctionArgs) => {
+export const action = async ({params, request}: ActionFunctionArgs) => {
   const isAuth = await isUserAuthenticated(request)
 
   if (!isAuth) return redirect('/login')
 
+  const p = params['*']
+  const isValid = validateUUID(p)
+
+  if (!p || !isValid) return {error: 'not valid project id'}
+
   const formData = await request.formData()
   const data = Object.fromEntries(formData) as Record<string, string>
 
-  const required = ['title', 'content']
+  const required = ['status', 'title', 'content']
 
   for (const field of required) {
     if (!data[field]) {
@@ -44,30 +54,33 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
   const {title, content} = data
 
-  if (!['draft', 'publish'].includes(data.status)) {
+  if (!['draft', 'publish', 'archive'].includes(data.status)) {
     return {error: 'invalid status value'}
   }
 
   const status = data.status as 'draft' | 'publish' | 'archive'
   const tags = formData.getAll('tags').map(id => parseInt(id as string, 10))
-  const result = await tryCatch(createNote({title, content, status, tags}))
+
+  const result = await tryCatch(
+    updateNote({id: p, status, title, content, tags}),
+  )
 
   if (result.error) {
-    console.error('error creating note:', result.error)
-    return {error: 'error creating note'}
+    console.error('error updating note:', result.error)
+    return {error: 'error updating note'}
   }
 
   return {
-    success: 'note created',
+    success: 'note updated',
     result,
     error: null,
   }
 }
 
-const DashboardNotesCreate = () => {
+const DashboardNotesView = () => {
+  const {note} = useLoaderData<typeof loader>()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const tags = useLoaderData<typeof loader>()
   const actionData = useActionData<typeof action>()
   const navigate = useNavigate()
 
@@ -79,6 +92,8 @@ const DashboardNotesCreate = () => {
     }
   }, [actionData])
 
+  const handleChange = () => setError(null)
+
   useEffect(() => {
     if (actionData?.success) {
       const timeout = setTimeout(() => {
@@ -89,13 +104,11 @@ const DashboardNotesCreate = () => {
     }
   }, [actionData, navigate])
 
-  const handleChange = () => setError(null)
-
   return (
     <>
       <ControlsNotes />
 
-      <NoteForm handleChange={handleChange} tags={tags} />
+      <NoteForm handleChange={handleChange} data={note} />
 
       <FeedbackDialog
         actionData={error ? {error} : success ? {success} : undefined}
@@ -104,4 +117,4 @@ const DashboardNotesCreate = () => {
   )
 }
 
-export default DashboardNotesCreate
+export default DashboardNotesView

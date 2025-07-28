@@ -5,17 +5,21 @@ import {Editor} from '~/components/ui/admin/editor'
 import {InputText} from '~/components/ui/admin/input-text'
 import {Select} from '~/components/ui/admin/select'
 import type {NoteProps} from '~/models/notes.server'
+import { TagBox } from '../tags'
 
 interface NoteFormProps {
   handleChange?: () => void
   data?: NoteProps
+  tags?: {id: number; name: string}[]
 }
 
-export const NoteForm = ({handleChange, data}: NoteFormProps) => {
+export const NoteForm = ({handleChange, data, tags}: NoteFormProps) => {
   const navigation = useNavigation()
   const [selected, setSelected] = useState(
     data ? data.status.toString() : 'draft',
   )
+  const dataTags = data ? data.tags : tags.data
+
   return (
     <Form method="post" className="mt-4">
       <input type="hidden" name="action" value={data ? 'update' : 'create'} />
@@ -53,6 +57,10 @@ export const NoteForm = ({handleChange, data}: NoteFormProps) => {
 
       <div className="mt-2 p-4">
         <Editor data={data && data.content} />
+      </div>
+
+      <div className="mt-2 flex flex-col">
+        <TagBox dataTags={dataTags} />
       </div>
 
       <Button
