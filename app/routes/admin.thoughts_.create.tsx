@@ -49,7 +49,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
   }
 
   const status = data.status as 'draft' | 'publish' | 'archive'
-  const tags = formData.getAll('tags') as string[]
+  const tags = formData.getAll('tags').map(id => parseInt(id as string, 10))
   const result = await tryCatch(createThought({content, status, tags}))
 
   if (result.error) {
