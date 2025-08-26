@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS thoughts (
   status thought_status DEFAULT 'draft',
   is_pinned BOOLEAN DEFAULT false,
   favorites INTEGER DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS thought_tags (

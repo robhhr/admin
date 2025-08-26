@@ -14,7 +14,7 @@ CREATE TABLE roles (
   name VARCHAR(30) NOT NULL UNIQUE
 );
 
-INSERT INTO roles (name) VALUES ('avatar'), ('admin'), ('viewer');
+INSERT INTO roles (name) VALUES ('avatar');
 
 -- users
 CREATE TABLE users (
@@ -23,8 +23,8 @@ CREATE TABLE users (
   role_id UUID NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(64) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_login  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- fingerprints
@@ -33,8 +33,8 @@ CREATE TABLE fingerprints (
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   fingerprint JSONB,
   hash VARCHAR(64),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_used_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
   is_active BOOLEAN DEFAULT true
 );
 
@@ -44,7 +44,7 @@ CREATE TABLE two_factor_codes (
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   expired BOOLEAN DEFAULT false,
   hashed_code TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- projects
@@ -55,8 +55,8 @@ CREATE TABLE projects (
   content TEXT NOT NULL,
   slug TEXT NOT NULL,
   metadata JSONB DEFAULT NULL,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- global tags
