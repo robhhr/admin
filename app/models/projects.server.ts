@@ -1,6 +1,5 @@
 import {query} from '../../db'
-import slugify from 'slugify'
-import {tryCatch} from '~/utils'
+import {slugify, generateUniqueSlug, tryCatch} from '~/utils'
 
 interface Status {
   status: 'draft' | 'publish' | 'archive'
@@ -56,7 +55,7 @@ export async function createProject({
       title,
       content,
       meta,
-      slugify(title, {lower: true, strict: true}),
+      slugify(title),
     ]),
   )
 
