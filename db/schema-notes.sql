@@ -7,6 +7,7 @@ CREATE TYPE note_status AS ENUM ('draft', 'publish', 'archive');
 CREATE TABLE IF NOT EXISTS notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title VARCHAR(150) NOT NULL,
+  slug VARCHAR(200) NOT NULL UNIQUE,
   content TEXT NOT NULL,
   status note_status DEFAULT 'draft',
   is_pinned BOOLEAN DEFAULT false,
