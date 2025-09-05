@@ -5,9 +5,11 @@ import {
   CreateLink,
   DiffSourceToggleWrapper,
   InsertImage,
+  InsertCodeBlock,
   MDXEditor,
   type MDXEditorMethods,
   codeBlockPlugin,
+  codeMirrorPlugin,
   diffSourcePlugin,
   headingsPlugin,
   imagePlugin,
@@ -25,10 +27,20 @@ export const Editor = ({data}: {data?: string}) => {
   const ref = useRef<MDXEditorMethods>(null)
   const [mounted, setMounted] = useState(false)
   const [content, setContent] = useState(markdown)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  const handleChange = (value: string) => {
+    try {
+      setContent(value)
+      setError(null)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unknown error')
+    }
+  }
 
   if (!mounted) return null
 
@@ -42,14 +54,28 @@ export const Editor = ({data}: {data?: string}) => {
           headingsPlugin(),
           listsPlugin(),
           quotePlugin(),
-          codeBlockPlugin({defaultCodeBlockLanguage: 'js'}),
+          codeBlockPlugin({defaultCodeBlockLanguage: ''}),
+          codeMirrorPlugin({
+            codeBlockLanguages: {
+              '': 'Plain text',
+              css: 'CSS',
+              html: 'HTML',
+              js: 'JavaScript',
+              jsx: 'JSX',
+              ts: 'TypeScript',
+              tsx: 'TSX',
+              python: 'Python',
+              bash: 'Bash',
+              json: 'JSON'
+            }
+          }),
           linkPlugin(),
           thematicBreakPlugin(),
           linkDialogPlugin(),
           imagePlugin(),
           diffSourcePlugin({
-            viewMode: 'source',
-            readOnlyDiff: true,
+            viewMode: 'rich-text',
+            readOnlyDiff: false,
           }),
           toolbarPlugin({
             toolbarClassName: 'mdx-toolbar',
@@ -57,14 +83,20 @@ export const Editor = ({data}: {data?: string}) => {
               <DiffSourceToggleWrapper>
                 <BoldItalicUnderlineToggles />
                 <CodeToggle />
+                <InsertCodeBlock />
                 <CreateLink />
                 <InsertImage />
               </DiffSourceToggleWrapper>
             ),
           }),
         ]}
-        onChange={value => setContent(value)}
+        onChange={handleChange}
       />
+      {error && (
+        <div style={{ color: 'red', marginTop: '8px', fontSize: '14px' }}>
+          Error: {error}
+        </div>
+      )}
       <input type="hidden" name="content" value={content} />
     </>
   )
