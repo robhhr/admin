@@ -24,6 +24,7 @@ import '@mdxeditor/editor/style.css'
 
 export const Editor = ({data}: {data?: string}) => {
   const markdown = data || ''
+  const originalMarkdown = useRef(markdown)
   const ref = useRef<MDXEditorMethods>(null)
   const [mounted, setMounted] = useState(false)
   const [content, setContent] = useState(markdown)
@@ -76,6 +77,7 @@ export const Editor = ({data}: {data?: string}) => {
           diffSourcePlugin({
             viewMode: 'rich-text',
             readOnlyDiff: false,
+            diffMarkdown: originalMarkdown.current,
           }),
           toolbarPlugin({
             toolbarClassName: 'mdx-toolbar',
