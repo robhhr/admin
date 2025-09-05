@@ -102,7 +102,7 @@
   }
 
   .mdx-toolbar {
-    @apply !bg-silver shadow-window dark:!bg-background-dark dark:shadow-window-dark ml-auto !w-full !max-w-64 border-2 !p-1 lowercase;
+    @apply !bg-silver shadow-window dark:!bg-background-dark dark:shadow-window-dark ml-auto !w-full !max-w-80 border-2 !p-1 lowercase;
 
     * {
       @apply dark:!text-color-dark !bg-transparent;
