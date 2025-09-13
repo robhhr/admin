@@ -233,7 +233,7 @@ const Login = () => {
   const handleChange = () => setError(null)
 
   return (
-    <div className="bg-silver relative mx-auto flex h-screen min-h-96 w-full items-center justify-center p-5">
+    <div className="bg-silver dark:bg-silver-dark relative mx-auto flex h-screen min-h-96 w-full items-center justify-center p-5">
       {actionData?.authState === AuthState.TWO_FACTOR ? (
         <CodeAuthForm fingerprint={fingerprint || undefined} />
       ) : (

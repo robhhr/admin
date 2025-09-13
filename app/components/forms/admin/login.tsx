@@ -27,7 +27,7 @@ export const LoginForm = ({
   }
 
   return (
-    <div className="bg-silver shadow-window flex w-full max-w-96 flex-col p-[3px]">
+    <div className="bg-silver dark:bg-silver-dark shadow-window flex w-full max-w-96 flex-col p-[3px]">
       <TitleBar title="admin" />
 
       <Form method="post" className="m-2">

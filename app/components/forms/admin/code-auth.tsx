@@ -6,7 +6,7 @@ import type {CodeAuthFormProps} from '~/types/admin/forms'
 
 export const CodeAuthForm = ({fingerprint}: CodeAuthFormProps) => {
   return (
-    <div className="bg-silver shadow-window flex w-full max-w-96 flex-col p-[3px]">
+    <div className="bg-silver dark:bg-silver-dark shadow-window flex w-full max-w-96 flex-col p-[3px]">
       <TitleBar title="2FA" />
 
       <Form method="post" className="m-2 flex flex-col">
