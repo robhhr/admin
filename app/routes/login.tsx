@@ -18,7 +18,13 @@ import {
   login,
 } from '~/models/auth.server'
 import {checkIFingerprintExists} from '~/models/session.server'
-import {getTOTPSecret, verifyTOTPCode} from '~/models/totp.server'
+import {
+  checkTOTPRateLimit,
+  getTOTPSecret,
+  recordTOTPFailure,
+  resetTOTPRateLimit,
+  verifyTOTPCode,
+} from '~/models/totp.server'
 import {commitSession, getSession} from '~/session.server'
 import {createValkeySession} from '~/valkey/valkey.server'
 
@@ -64,7 +70,16 @@ export const action = async ({request}: ActionFunctionArgs) => {
         return {error: 'error with user'}
       }
 
-      // #3 get TOTP secret from database and verify code
+      // #3 check rate limit before attempting verification
+      const rateLimit = await checkTOTPRateLimit(userId)
+
+      if (rateLimit.locked) {
+        return {
+          error: 'too many failed attempts. Please try again in 15 minutes.',
+        }
+      }
+
+      // #4 get TOTP secret from database and verify code
       try {
         const secret = await getTOTPSecret(userId)
 
@@ -75,10 +90,24 @@ export const action = async ({request}: ActionFunctionArgs) => {
         const isValid = verifyTOTPCode(secret, code)
 
         if (!isValid) {
-          return {error: 'invalid code'}
+          await recordTOTPFailure(userId)
+
+          const remaining = rateLimit.attemptsRemaining
+            ? rateLimit.attemptsRemaining - 1
+            : 0
+
+          return {
+            error:
+              remaining > 0
+                ? `invalid code. ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`
+                : 'invalid code. Account locked for 15 minutes.',
+          }
         }
 
-        // #3.1 if valid, authenticate & insert browser fingerprint
+        // reset rate limit
+        await resetTOTPRateLimit(userId)
+
+        // #4.1 if valid, authenticate & insert browser fingerprint
         const {sessionToken} = await createValkeySession({
           userId,
           fingerprint,

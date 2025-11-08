@@ -1,6 +1,7 @@
 import {query} from 'db'
 import {Secret, TOTP} from 'otpauth'
 import * as QRCode from 'qrcode'
+import {valkeyClient} from '~/valkey/valkey.server'
 
 interface TOTPSecretRow {
   id: string
@@ -80,7 +81,7 @@ export async function saveTOTPSecret(
   const values = [userId, secret, enabled]
   try {
     await query(sql, values)
-    console.log(`saved TOTP secret for user: ${userId}`)
+    console.log(`saved TOTP secret for user`)
   } catch (error) {
     console.error('error saving TOTP secret:', error)
     throw error
@@ -156,3 +157,61 @@ export async function deleteTOTPSecret(userId: string): Promise<void> {
     throw error
   }
 }
+
+// rate limiting practice
+const MAX_TOTP_ATTEMPTS = 5
+const LOCKOUT_DURATION = 15 * 60 // 15min
+
+export async function checkTOTPRateLimit(
+  userId: string,
+): Promise<{locked: boolean; attemptsRemaining?: number}> {
+  const key = `totp_attempts:${userId}`
+
+  try {
+    const attempts = await valkeyClient.get(key)
+    const attemptCount = attempts ? parseInt(attempts, 10) : 0
+
+    if (attemptCount >= MAX_TOTP_ATTEMPTS) {
+      return {locked: true}
+    }
+
+    return {locked: false, attemptsRemaining: MAX_TOTP_ATTEMPTS - attemptCount}
+  } catch (error) {
+    console.error('error checking TOTP rate limit:', error)
+    return {locked: false}
+  }
+}
+
+export async function recordTOTPFailure(userId: string): Promise<void> {
+  const key = `totp_attempts:${userId}`
+
+  try {
+    const current = await valkeyClient.get(key)
+    const attemptCount = current ? parseInt(current, 10) : 0
+
+    await valkeyClient.set(
+      key,
+      (attemptCount + 1).toString(),
+      'EX',
+      LOCKOUT_DURATION,
+    )
+
+    console.log(
+      `recorded TOTP failure for user: ${attemptCount + 1}/${MAX_TOTP_ATTEMPTS}`,
+    )
+  } catch (error) {
+    console.error('error recording TOTP failure:', error)
+  }
+}
+
+export async function resetTOTPRateLimit(userId: string): Promise<void> {
+  const key = `totp_attempts:${userId}`
+
+  try {
+    await valkeyClient.del(key)
+    console.log(`reset TOTP rate limit for user`)
+  } catch (error) {
+    console.error('error resetting TOTP rate limit:', error)
+  }
+}
+

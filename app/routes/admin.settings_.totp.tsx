@@ -12,10 +12,13 @@ import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {InputText} from '~/components/ui/admin/input-text'
 import {isUserAuthenticated} from '~/models/auth.server'
 import {
+  checkTOTPRateLimit,
   disableTOTP,
   generateQRCode,
   generateTOTPSecret,
   isTOTPEnabled,
+  recordTOTPFailure,
+  resetTOTPRateLimit,
   saveTOTPSecret,
   verifyTOTPCode,
 } from '~/models/totp.server'
@@ -88,11 +91,35 @@ export const action = async ({request}: ActionFunctionArgs) => {
         return {error: 'secret missing'}
       }
 
+      // check rate limit
+      const rateLimit = await checkTOTPRateLimit(userId)
+
+      if (rateLimit.locked) {
+        return {
+          error: 'too many failed attempts, try again in 15 minutes.',
+        }
+      }
+
       const isValid = verifyTOTPCode(secret, code)
 
       if (!isValid) {
-        return {error: 'invalid code - please try again'}
+        // save failed attempt
+        await recordTOTPFailure(userId)
+
+        const remaining = rateLimit.attemptsRemaining
+          ? rateLimit.attemptsRemaining - 1
+          : 0
+
+        return {
+          error:
+            remaining > 0
+              ? `invalid code. ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`
+              : 'invalid code, locked for 15 minutes.',
+        }
       }
+
+      // reset rate limit on successful verification
+      await resetTOTPRateLimit(userId)
 
       const result = await tryCatch(saveTOTPSecret(userId, secret, true))
 
