@@ -12,18 +12,14 @@ import useFingerprint from '~/hooks/useFingerprint'
 import {CodeAuthForm, LoginForm} from '~/components/forms/admin'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
 import {
-  checkIfCodeMatches,
-  insertTwoFactorCode,
-} from '~/models/auth-codes.server'
-import {
   createUserSession,
   insertFingerprint,
   isUserAuthenticated,
   login,
 } from '~/models/auth.server'
 import {checkIFingerprintExists} from '~/models/session.server'
+import {getTOTPSecret, verifyTOTPCode} from '~/models/totp.server'
 import {commitSession, getSession} from '~/session.server'
-import {generateHashCode, sendCodeEmail} from '~/utils'
 import {createValkeySession} from '~/valkey/valkey.server'
 
 enum AuthState {
@@ -53,7 +49,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
   switch (action) {
     case '2FA': {
-      // #1 check form code & generate hashed code
+      // #1 get TOTP code from form
       const code = body.get('code') as string
 
       if (!code) {
@@ -68,15 +64,21 @@ export const action = async ({request}: ActionFunctionArgs) => {
         return {error: 'error with user'}
       }
 
-      // #3 compare form code w/ hashed code in db
+      // #3 get TOTP secret from database and verify code
       try {
-        const matches = await checkIfCodeMatches({userId, code})
+        const secret = await getTOTPSecret(userId)
 
-        if (!matches) {
+        if (!secret) {
+          return {error: 'TOTP not enabled for this account'}
+        }
+
+        const isValid = verifyTOTPCode(secret, code)
+
+        if (!isValid) {
           return {error: 'invalid code'}
         }
 
-        // #3.1 if match change cookie auth & insert browser data
+        // #3.1 if valid, authenticate & insert browser fingerprint
         const {sessionToken} = await createValkeySession({
           userId,
           fingerprint,
@@ -107,7 +109,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
           }
         }
       } catch (error) {
-        console.error('error verifying code:', error)
+        console.error('error verifying TOTP code:', error)
         return {
           authState: AuthState.ERROR,
           error: 'error verifying code',
@@ -136,36 +138,35 @@ export const action = async ({request}: ActionFunctionArgs) => {
         hash: fingerprint,
       })
 
-      // #2.1 if it doesnt, try to insert fingerprint, auth code & send email w/ auth code && render 2FA
+      // #2.1 if device doesn't exist, require TOTP
       if (!exists) {
-        const hashedCode = await generateHashCode()
-        // insert cookie without authenticated flag
+        const secret = await getTOTPSecret(user.id)
+
+        if (!secret) {
+          return {
+            error: 'TOTP not enabled for this account. Contact administrator.',
+          }
+        }
+
+        // TOTP is enabled, require code from auth app
         const createSession = await createUserSession(
           user.id,
           false,
           request,
           remember,
+          undefined,
+          username,
         )
 
-        try {
-          await Promise.allSettled([
-            insertTwoFactorCode(user.id, hashedCode.hash),
-            sendCodeEmail(hashedCode.code),
-          ])
-
-          return data(
-            {authState: AuthState.TWO_FACTOR, error: null},
-            {
-              headers: {
-                'Set-Cookie': createSession,
-                'Content-Type': 'application/json',
-              },
+        return data(
+          {authState: AuthState.TWO_FACTOR, error: null},
+          {
+            headers: {
+              'Set-Cookie': createSession,
+              'Content-Type': 'application/json',
             },
-          )
-        } catch (error) {
-          console.error('error inserting log data:', error)
-          return {error: 'error inserting log data'}
-        }
+          },
+        )
       }
 
       // #3 if exists continue w/o 2FA
@@ -186,6 +187,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
           request,
           remember,
           sessionToken,
+          username,
         )
 
         return redirect('/admin/projects', {
