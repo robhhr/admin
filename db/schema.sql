@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- drop in dependency order
-DROP TABLE IF EXISTS two_factor_codes;
+DROP TABLE IF EXISTS totp_secrets;
 DROP TABLE IF EXISTS fingerprints;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS roles;
@@ -38,13 +38,13 @@ CREATE TABLE fingerprints (
   is_active BOOLEAN DEFAULT true
 );
 
--- 2FA
-CREATE TABLE two_factor_codes (
+-- TOTP secrets for time-based one-time passwords (replaces old two_factor_codes)
+CREATE TABLE totp_secrets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  expired BOOLEAN DEFAULT false,
-  hashed_code TEXT NOT NULL,
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+  user_id UUID UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  secret VARCHAR(255) NOT NULL,
+  enabled BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- projects
