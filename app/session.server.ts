@@ -4,6 +4,7 @@ const Max_Age = 3600
 
 type SessionData = {
   userId: string
+  username?: string
   authenticated: boolean
   remember: boolean
   sessionToken?: string

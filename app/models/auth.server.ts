@@ -50,6 +50,7 @@ export async function createUserSession(
   request: Request,
   remember: boolean = false,
   sessionToken?: string,
+  username?: string,
 ) {
   const session = await getSession(request.headers.get('Cookie'))
   const now = Date.now()
@@ -62,6 +63,10 @@ export async function createUserSession(
 
   if (sessionToken) {
     session.set('sessionToken', sessionToken)
+  }
+
+  if (username) {
+    session.set('username', username)
   }
 
   return commitSession(session)
