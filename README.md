@@ -1,12 +1,36 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/ae0fa56f-e8a4-43cf-ab90-dabb101e418a/deploy-status)](https://app.netlify.com/sites/robhhr/deploys)
+### admin
 
-##### admin
+personal content management for [my site](https://github.com/robhhr/robhhr)
 
-content management for [personal site](https://github.com/robhhr/robhhr)
-
-###### tech
+#### tech
 
 - Postgres
 - Redis
 - React Router
 - Tailwind
+
+#### prerequisites
+
+- node.js version (from .nvmrc)
+- PostgreSQL
+- Valkey/Redis
+- env variables needed
+
+#### installation & setup
+
+##### install dependencies
+```
+npm install
+```
+
+##### set up env variables
+```
+DATABASE_URL, REDIS_URL, SESSION_SECRET, etc.
+```
+
+##### init db & run schema files found in `/db`
+
+##### init server
+```
+npm run dev
+```
