@@ -161,7 +161,7 @@ export async function getThoughtsByStatusWithTags(status: PostStatus[]) {
     LEFT JOIN tags tg ON tt.tag_id = tg.id
     WHERE t.status = ANY($1)
     GROUP BY t.id
-    ORDER BY t.is_pinned DESC, t.updated_at DESC;
+    ORDER BY t.is_pinned DESC, t.created_at DESC;
   `
 
   const thoughts = await tryCatch(query<ThoughtProps>(sql, [status]))
