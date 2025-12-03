@@ -1,4 +1,5 @@
 export * from './controls-projects'
+export * from './controls-photos'
 export * from './controls-notes'
 export * from './controls-thoughts'
 export * from './nav'
