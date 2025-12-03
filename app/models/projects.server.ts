@@ -1,5 +1,5 @@
 import {query} from '../../db'
-import {slugify, generateUniqueSlug, tryCatch} from '~/utils'
+import {generateUniqueSlug, slugify, tryCatch} from '~/utils'
 
 interface Status {
   status: 'draft' | 'publish' | 'archive'
@@ -50,13 +50,7 @@ export async function createProject({
   `
 
   const project = await tryCatch(
-    query<Project>(sql, [
-      status,
-      title,
-      content,
-      meta,
-      slugify(title),
-    ]),
+    query<Project>(sql, [status, title, content, meta, slugify(title)]),
   )
 
   if (project.error) {

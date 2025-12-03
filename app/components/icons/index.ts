@@ -1,3 +1,3 @@
 export * from './edit'
 export * from './forms'
-export * from  './link'
+export * from './link'

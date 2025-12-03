@@ -43,7 +43,9 @@ export const action = async ({request}: ActionFunctionArgs) => {
   if (!content) return {error: 'content required'}
 
   const tags = body.getAll('tags').map(id => parseInt(id as string, 10))
-  const data = await tryCatch(createProject({status, title, content, meta, tags}))
+  const data = await tryCatch(
+    createProject({status, title, content, meta, tags}),
+  )
 
   if (data.error) {
     console.error('error creating project:', data.error)
@@ -87,7 +89,11 @@ const DashboardProjectsCreate = () => {
     <>
       <ControlsProjects />
 
-      <ProjectForm handleChange={handleChange} setError={() => setError} tags={tags} />
+      <ProjectForm
+        handleChange={handleChange}
+        setError={() => setError}
+        tags={tags}
+      />
 
       <FeedbackDialog
         actionData={error ? {error} : success ? {success} : undefined}

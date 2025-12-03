@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import {
-    type ActionFunctionArgs,
+  type ActionFunctionArgs,
   type LoaderFunctionArgs,
   redirect,
   useActionData,
@@ -10,7 +10,7 @@ import {
 import {ControlsNotes} from '~/components/admin'
 import {NoteForm} from '~/components/forms/notes'
 import {FeedbackDialog} from '~/components/ui/admin/dialog'
-import { isUserAuthenticated } from '~/models/auth.server'
+import {isUserAuthenticated} from '~/models/auth.server'
 import {getNoteByIdWithTags, updateNote} from '~/models/notes.server'
 import {tryCatch, validateUUID} from '~/utils'
 

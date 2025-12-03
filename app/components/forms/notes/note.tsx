@@ -1,11 +1,11 @@
 import {useState} from 'react'
 import {Form, useNavigation} from 'react-router'
+import {TagBox} from '../tags'
 import {Button} from '~/components/modules'
 import {Editor} from '~/components/ui/admin/editor'
 import {InputText} from '~/components/ui/admin/input-text'
 import {Select} from '~/components/ui/admin/select'
 import type {NoteProps} from '~/models/notes.server'
-import { TagBox } from '../tags'
 
 interface NoteFormProps {
   handleChange?: () => void

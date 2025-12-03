@@ -5,7 +5,10 @@ import {toggleTheme} from '~/utils/toggle-theme'
 export const ToggleThemeComponent = () => {
   const contraintsRef = useRef(null)
   return (
-    <div className="text-color flex dark:text-color-dark mr-2" ref={contraintsRef}>
+    <div
+      className="text-color dark:text-color-dark mr-2 flex"
+      ref={contraintsRef}
+    >
       <Button className="!p-0.5" onClick={() => toggleTheme()}>
         <svg
           className="h-4 w-4 rotate-180"

@@ -7,7 +7,7 @@ export interface TagProps {
 }
 
 export interface TagPropsWithStatus extends TagProps {
-  is_selected: boolean  
+  is_selected: boolean
 }
 
 export async function createTag({name}: {name: string}) {

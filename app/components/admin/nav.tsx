@@ -26,7 +26,7 @@ export const Nav = () => {
         <li>
           <Link to="/admin/notes">notes</Link>
         </li>
-        <li className='md:ml-auto'>
+        <li className="md:ml-auto">
           <Link to="/admin/tags">tags</Link>
         </li>
       </ul>

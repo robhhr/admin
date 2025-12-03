@@ -1,5 +1,5 @@
 import {query} from '../../db'
-import {tryCatch, slugify, generateUniqueSlug} from '~/utils'
+import {generateUniqueSlug, slugify, tryCatch} from '~/utils'
 
 export type PostStatus = 'draft' | 'publish' | 'archive'
 
@@ -34,7 +34,9 @@ export async function createNote({
     RETURNING id;
   `
 
-  const note = await tryCatch(query<NoteProps>(sql, [title, slugify(title), content, status]))
+  const note = await tryCatch(
+    query<NoteProps>(sql, [title, slugify(title), content, status]),
+  )
 
   if (note.error) {
     console.error('error inserting note:', note.error)

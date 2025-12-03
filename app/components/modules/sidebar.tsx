@@ -1,5 +1,5 @@
 import {LogoutButton} from './logout-button'
-import { SettingsButton } from './settings'
+import {SettingsButton} from './settings'
 import {ToggleTheme} from './toggle-theme'
 
 export const Sidebar = () => {

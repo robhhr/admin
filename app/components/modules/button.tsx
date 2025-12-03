@@ -20,7 +20,8 @@ const button = cva('button w-fit', {
     {
       intent: 'admin',
       disabled: true,
-      className: 'text-shadow-button-disabled text-[grey] dark:text-color-dark/50',
+      className:
+        'text-shadow-button-disabled text-[grey] dark:text-color-dark/50',
     },
   ],
   defaultVariants: {

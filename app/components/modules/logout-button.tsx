@@ -5,7 +5,7 @@ export const LogoutButton = () => {
   const fetcher = useFetcher()
   return (
     <fetcher.Form action="/logout" method="post">
-      <Button intent="admin" type="submit" className="!p-0.5 flex">
+      <Button intent="admin" type="submit" className="flex !p-0.5">
         <svg
           className="h-4 w-4 text-gray-800 dark:text-white"
           aria-hidden="true"

@@ -214,4 +214,3 @@ export async function resetTOTPRateLimit(userId: string): Promise<void> {
     console.error('error resetting TOTP rate limit:', error)
   }
 }
-

@@ -163,8 +163,11 @@
       }
     }
 
-    h1, h2, h3, h4 {
-      @apply font-bold leading-normal;
+    h1,
+    h2,
+    h3,
+    h4 {
+      @apply leading-normal font-bold;
     }
 
     h1 {
@@ -195,17 +198,19 @@
     }
 
     ul {
-      @apply list-disc list-inside;
+      @apply list-inside list-disc;
 
-      ul, ol {
+      ul,
+      ol {
         @apply ml-4;
       }
     }
 
     ol {
-      @apply list-decimal list-inside;
+      @apply list-inside list-decimal;
 
-      ul, ol {
+      ul,
+      ol {
         @apply ml-4;
       }
     }

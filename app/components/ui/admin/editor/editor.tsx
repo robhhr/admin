@@ -4,8 +4,8 @@ import {
   CodeToggle,
   CreateLink,
   DiffSourceToggleWrapper,
-  InsertImage,
   InsertCodeBlock,
+  InsertImage,
   MDXEditor,
   type MDXEditorMethods,
   codeBlockPlugin,
@@ -67,8 +67,8 @@ export const Editor = ({data}: {data?: string}) => {
               tsx: 'TSX',
               python: 'Python',
               bash: 'Bash',
-              json: 'JSON'
-            }
+              json: 'JSON',
+            },
           }),
           linkPlugin(),
           thematicBreakPlugin(),
@@ -95,7 +95,7 @@ export const Editor = ({data}: {data?: string}) => {
         onChange={handleChange}
       />
       {error && (
-        <div style={{ color: 'red', marginTop: '8px', fontSize: '14px' }}>
+        <div style={{color: 'red', marginTop: '8px', fontSize: '14px'}}>
           Error: {error}
         </div>
       )}

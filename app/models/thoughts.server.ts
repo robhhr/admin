@@ -61,7 +61,7 @@ export async function updateThought({
   is_pinned,
   tags,
 }: ThoughtWithTags) {
-  await query('BEGIN');
+  await query('BEGIN')
 
   const sql = `
     UPDATE thoughts
@@ -95,9 +95,9 @@ export async function updateThought({
     await tryCatch(query(insertTagsSql, [id, tags]))
   }
 
-  await query('COMMIT');
+  await query('COMMIT')
 
-  return { success: true };
+  return {success: true}
 }
 
 export async function getThoughtByIdWithTags({id}: {id: string}) {
