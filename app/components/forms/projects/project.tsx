@@ -8,12 +8,13 @@ import {InputText} from '~/components/ui/admin/input-text'
 import MetaControls from '~/components/ui/admin/meta'
 import {Select} from '~/components/ui/admin/select'
 import type {ProjectEdit} from '~/models/projects.server'
+import type {TagProps} from '~/models/tags'
 
 interface ProjectFormProps {
   handleChange: () => void
   setError: () => void
   projectData?: ProjectEdit
-  tags?: {id: number; name: string}[]
+  tags?: TagProps[]
 }
 
 export const ProjectForm = ({
@@ -26,7 +27,8 @@ export const ProjectForm = ({
   const [selected, setSelected] = useState(
     projectData ? projectData.status.toString() : 'draft',
   )
-  const dataTags = projectData ? projectData.tags : tags.data
+  const dataTags =
+    projectData?.tags ?? tags?.map(tag => ({...tag, is_selected: false})) ?? []
 
   return (
     <Form method="post" className="mt-4">

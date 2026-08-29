@@ -1,5 +1,6 @@
 import {query} from '../../db'
 import {generateUniqueSlug, slugify, tryCatch} from '~/utils'
+import type {TagPropsWithStatus} from './tags'
 
 interface Status {
   status: 'draft' | 'publish' | 'archive'
@@ -27,6 +28,7 @@ export interface ProjectEdit {
   title: string
   content: string
   metadata?: MetaProps[]
+  tags?: TagPropsWithStatus[]
 }
 
 export async function createProject({

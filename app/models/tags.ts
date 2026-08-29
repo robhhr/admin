@@ -2,7 +2,7 @@ import {query} from '../../db'
 import {tryCatch} from '~/utils'
 
 export interface TagProps {
-  id: string
+  id: number
   name: string
 }
 

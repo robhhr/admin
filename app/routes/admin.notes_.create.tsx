@@ -95,7 +95,7 @@ const DashboardNotesCreate = () => {
     <>
       <ControlsNotes />
 
-      <NoteForm handleChange={handleChange} tags={tags} />
+      <NoteForm handleChange={handleChange} tags={tags.data} />
 
       <FeedbackDialog
         actionData={error ? {error} : success ? {success} : undefined}

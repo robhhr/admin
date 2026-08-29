@@ -6,11 +6,12 @@ import {Editor} from '~/components/ui/admin/editor'
 import {InputText} from '~/components/ui/admin/input-text'
 import {Select} from '~/components/ui/admin/select'
 import type {NoteProps} from '~/models/notes.server'
+import type {TagProps} from '~/models/tags'
 
 interface NoteFormProps {
   handleChange?: () => void
   data?: NoteProps
-  tags?: {id: number; name: string}[]
+  tags?: TagProps[]
 }
 
 export const NoteForm = ({handleChange, data, tags}: NoteFormProps) => {
@@ -18,7 +19,8 @@ export const NoteForm = ({handleChange, data, tags}: NoteFormProps) => {
   const [selected, setSelected] = useState(
     data ? data.status.toString() : 'draft',
   )
-  const dataTags = data ? data.tags : tags.data
+  const dataTags =
+    data?.tags ?? tags?.map(tag => ({...tag, is_selected: false})) ?? []
 
   return (
     <Form method="post" className="mt-4">

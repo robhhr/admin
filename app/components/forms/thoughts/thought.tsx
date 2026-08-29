@@ -5,11 +5,12 @@ import {Button} from '~/components/modules'
 import {Editor} from '~/components/ui/admin/editor'
 import {Select} from '~/components/ui/admin/select'
 import type {ThoughtWithTags} from '~/models/thoughts.server'
+import type {TagProps} from '~/models/tags'
 
 interface ThoughtFormProps {
   handleChange?: () => void
   data?: ThoughtWithTags
-  tags?: {id: number; name: string}[]
+  tags?: TagProps[]
 }
 
 export const ThoughtForm = ({handleChange, data, tags}: ThoughtFormProps) => {
@@ -17,7 +18,8 @@ export const ThoughtForm = ({handleChange, data, tags}: ThoughtFormProps) => {
   const [selected, setSelected] = useState(
     data ? data.status.toString() : 'draft',
   )
-  const dataTags = data ? data.tags : tags
+  const dataTags =
+    data?.tags ?? tags?.map(tag => ({...tag, is_selected: false})) ?? []
 
   return (
     <Form method="post" className="mt-4">

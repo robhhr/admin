@@ -1,21 +1,21 @@
 # Use the Node alpine official image
 # https://hub.docker.com/_/node
-FROM node:lts-alpine
+FROM node:24-alpine
 
 # Create and change to the app directory.
 WORKDIR /app
 
-# Copy the files to the container image
-COPY package*.json ./
+# Copy the package manifests to the container image
+COPY package.json pnpm-lock.yaml ./
 
 # Install packages
-RUN npm ci
+RUN corepack enable && pnpm install --frozen-lockfile
 
 # Copy local code to the container image.
 COPY . ./
 
 # Build the app.
-RUN npm run build
+RUN pnpm run build
 
 # Serve the app
-CMD ["npm", "run", "start"]
+CMD ["pnpm", "run", "start"]

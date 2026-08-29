@@ -1,5 +1,6 @@
 import {query} from '../../db'
 import {tryCatch} from '~/utils'
+import type {TagProps, TagPropsWithStatus} from './tags'
 
 export type PostStatus = 'draft' | 'publish' | 'archive'
 
@@ -9,9 +10,14 @@ export interface ThoughtProps {
   favorites?: number
   is_pinned?: boolean
   status: PostStatus
+  tags?: TagProps[]
 }
 
 export interface ThoughtWithTags extends ThoughtProps {
+  tags?: TagPropsWithStatus[]
+}
+
+type ThoughtWriteProps = Omit<ThoughtProps, 'id' | 'favorites' | 'tags'> & {
   tags?: number[]
 }
 
@@ -19,7 +25,7 @@ export async function createThought({
   content,
   status,
   tags,
-}: Omit<ThoughtWithTags, 'id' | 'favorites'>) {
+}: ThoughtWriteProps) {
   const sql = `
     INSERT INTO thoughts (
       content,
@@ -60,7 +66,7 @@ export async function updateThought({
   content,
   is_pinned,
   tags,
-}: ThoughtWithTags) {
+}: ThoughtWriteProps & Pick<ThoughtProps, 'id'>) {
   await query('BEGIN')
 
   const sql = `

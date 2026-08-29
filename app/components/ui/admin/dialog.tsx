@@ -12,8 +12,8 @@ export const FeedbackDialog = ({
 
   const transition = {
     duration: 0.5,
-    ease: [0.19, 1, 0.22, 1],
-    type: 'spring',
+    ease: [0.19, 1, 0.22, 1] as const,
+    type: 'spring' as const,
     bounce: 0.25,
   }
 

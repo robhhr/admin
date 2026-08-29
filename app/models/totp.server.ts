@@ -1,4 +1,4 @@
-import {query} from 'db'
+import {query} from '../../db'
 import {Secret, TOTP} from 'otpauth'
 import * as QRCode from 'qrcode'
 import {valkeyClient} from '~/valkey/valkey.server'

@@ -21,7 +21,7 @@ personal content management for [my site](https://github.com/robhhr/robhhr)
 ##### install dependencies
 
 ```
-npm install
+pnpm install
 ```
 
 ##### set up env variables
@@ -35,5 +35,5 @@ DATABASE_URL, REDIS_URL, SESSION_SECRET, etc.
 ##### init server
 
 ```
-npm run dev
+pnpm run dev
 ```

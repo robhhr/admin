@@ -92,7 +92,7 @@ const DashboardProjectsCreate = () => {
       <ProjectForm
         handleChange={handleChange}
         setError={() => setError}
-        tags={tags}
+        tags={tags.data}
       />
 
       <FeedbackDialog

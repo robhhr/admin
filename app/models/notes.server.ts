@@ -1,5 +1,6 @@
 import {query} from '../../db'
 import {generateUniqueSlug, slugify, tryCatch} from '~/utils'
+import type {TagPropsWithStatus} from './tags'
 
 export type PostStatus = 'draft' | 'publish' | 'archive'
 
@@ -10,11 +11,11 @@ export interface NoteProps {
   favorites: number
   is_pinned?: boolean
   status: PostStatus
-  tags?: {
-    id: number
-    name: string
-    is_selected?: boolean
-  }[]
+  tags?: TagPropsWithStatus[]
+}
+
+type NoteWriteProps = Omit<NoteProps, 'id' | 'favorites' | 'tags'> & {
+  tags?: number[]
 }
 
 export async function createNote({
@@ -22,7 +23,7 @@ export async function createNote({
   content,
   status,
   tags,
-}: Omit<NoteProps, 'id' | 'favorites'>) {
+}: NoteWriteProps) {
   const sql = `
     INSERT INTO notes (
       title,
@@ -110,7 +111,7 @@ export async function updateNote({
   title,
   content,
   tags,
-}: NoteProps) {
+}: NoteWriteProps & Pick<NoteProps, 'id'>) {
   const sql = `
     UPDATE notes
     SET status = $2, title = $3, content = $4, updated_at = current_timestamp
