@@ -81,8 +81,8 @@
     font-weight: 400;
     font-display: swap;
     src:
-      url(/assets/fonts/MSSansSerif.woff) format('woff'),
-      url(/assets/fonts/MSSansSeris.woff2) format('woff2');
+      url(/assets/fonts/MSSansSerif.woff2) format('woff2'),
+      url(/assets/fonts/MSSansSerif.woff) format('woff');
   }
 
   html,
