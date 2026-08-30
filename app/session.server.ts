@@ -1,6 +1,13 @@
 import {createCookie, createCookieSessionStorage} from 'react-router'
 
-const Max_Age = 3600
+export const SESSION_MAX_AGE = {
+  standard: 30 * 60,
+  remembered: 30 * 24 * 60 * 60,
+} as const
+
+export function getSessionMaxAge(remember: boolean): number {
+  return remember ? SESSION_MAX_AGE.remembered : SESSION_MAX_AGE.standard
+}
 
 type SessionData = {
   userId: string
@@ -23,7 +30,7 @@ if (!sessionSecret) {
 
 export const sessionCookie = createCookie('_session', {
   httpOnly: true,
-  maxAge: Max_Age,
+  maxAge: SESSION_MAX_AGE.standard,
   path: '/',
   sameSite: 'lax',
   secrets: ['s3cret1'],

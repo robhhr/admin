@@ -1,7 +1,7 @@
 import {redirect} from 'react-router'
 import {query} from '../../db'
 import bcrypt from 'bcryptjs'
-import {commitSession, getSession} from '~/session.server'
+import {commitSession, getSession, getSessionMaxAge} from '~/session.server'
 import {valkeyClient} from '~/valkey/valkey.server'
 
 interface User {
@@ -54,7 +54,7 @@ export async function createUserSession(
 ) {
   const session = await getSession(request.headers.get('Cookie'))
   const now = Date.now()
-  const maxAge = remember ? 30 * 24 * 60 * 60 : 1800 // 30days vs 30min
+  const maxAge = getSessionMaxAge(remember)
   const expiresAt = now + maxAge * 1000
   session.set('userId', userId)
   session.set('authenticated', authenticated)
@@ -69,7 +69,7 @@ export async function createUserSession(
     session.set('username', username)
   }
 
-  return commitSession(session)
+  return commitSession(session, {maxAge})
 }
 
 export async function isUserAuthenticated(request: Request) {

@@ -1,7 +1,12 @@
 // NOTE: used only when attempting to log into admin
 import {randomUUID} from 'crypto'
 import Valkey from 'iovalkey'
-import {commitSession, getSession} from '~/session.server'
+import {
+  commitSession,
+  getSession,
+  getSessionMaxAge,
+  SESSION_MAX_AGE,
+} from '~/session.server'
 
 interface ValkeySession {
   userId: string
@@ -12,7 +17,7 @@ interface ValkeySession {
   remember?: boolean
 }
 
-const EXPIRY_SECONDS = 1800 // 30min
+const EXPIRY_SECONDS = SESSION_MAX_AGE.standard
 const REFRESH_THRESHOLD = 5 * 60 * 1000 // 5min
 
 export const valkeyClient = new Valkey({
@@ -45,8 +50,7 @@ export const createValkeySession = async ({
       `session:${sessionToken}`,
       JSON.stringify(sessionData),
       'EX',
-      // 30 days vs 30min
-      remember ? 30 * 24 * 60 * 60 : 1800,
+      getSessionMaxAge(remember),
     )
   } catch (error) {
     console.error('error creating redis session:', error)

@@ -25,7 +25,7 @@ import {
   resetTOTPRateLimit,
   verifyTOTPCode,
 } from '~/models/totp.server'
-import {commitSession, getSession} from '~/session.server'
+import {commitSession, getSession, getSessionMaxAge} from '~/session.server'
 import {createValkeySession} from '~/valkey/valkey.server'
 
 enum AuthState {
@@ -49,7 +49,7 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 export const action = async ({request}: ActionFunctionArgs) => {
   const body = await request.formData()
   const action = body.get('action') as string
-  const remember = body.get('remember') === 'true'
+  const requestedRemember = body.get('remember') === 'true'
   const fingerprint = body.get('fingerprint') as string
   const fingerprintData = body.get('fingerprintData') as string
 
@@ -65,6 +65,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
       // #2 get user data from session (session created in case: 'login')
       const session = await getSession(request.headers.get('Cookie'))
       const userId = session.get('userId')
+      const remember = session.get('remember') === true
 
       if (!userId) {
         return {error: 'error with user'}
@@ -128,7 +129,9 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
           return redirect('/admin/projects', {
             headers: {
-              'Set-Cookie': await commitSession(session),
+              'Set-Cookie': await commitSession(session, {
+                maxAge: getSessionMaxAge(remember),
+              }),
             },
           })
         } else {
@@ -182,7 +185,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
           user.id,
           false,
           request,
-          remember,
+          requestedRemember,
           undefined,
           username,
         )
@@ -206,7 +209,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
           username,
           fingerprint,
           is2FA: true,
-          remember,
+          remember: requestedRemember,
         })
 
         // create local session w/ valkey id on it
@@ -214,7 +217,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
           user.id,
           true,
           request,
-          remember,
+          requestedRemember,
           sessionToken,
           username,
         )
