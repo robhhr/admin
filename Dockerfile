@@ -2,6 +2,9 @@
 # https://hub.docker.com/_/node
 FROM node:24-alpine
 
+# exiftool-vendored ships exiftool as a Perl distribution; alpine has no perl
+RUN apk add --no-cache perl
+
 # Create and change to the app directory.
 WORKDIR /app
 

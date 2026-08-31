@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+DROP TABLE IF EXISTS photos;
 DROP TABLE IF EXISTS photo_collections;
-DROP TABLE IF EXISTS photo;
 
 CREATE TABLE photo_collections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -17,9 +17,12 @@ CREATE TABLE photo_collections (
 CREATE TABLE photos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   collection_id UUID NOT NULL REFERENCES photo_collections(id) ON DELETE CASCADE,
-  storage_key_large TEXT NOT NULL,
-  storage_key_thumb TEXT NOT NULL,
-  blurhash TEXT,
+  storage_prefix   TEXT NOT NULL, -- 'photos/<id>'; object keys are <prefix>/<width>.<avif|jpg>
+  width            INTEGER NOT NULL, -- intrinsic dims of the largest derivative
+  height           INTEGER NOT NULL,
+  widths           INTEGER[] NOT NULL DEFAULT '{640,1280,2048}', -- widths actually generated (small RAW previews cap out)
+  placeholder      TEXT, -- tiny webp data URI shown while the real image loads
+  caption          TEXT,
   sort_index INTEGER NOT NULL DEFAULT 0,
   is_published     BOOLEAN NOT NULL DEFAULT true,
   taken_at         TIMESTAMPTZ,
@@ -35,4 +38,3 @@ CREATE TABLE photos (
 
 CREATE INDEX photos_collection_id_idx
   ON photos (collection_id, sort_index);
-

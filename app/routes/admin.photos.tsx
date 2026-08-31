@@ -1,39 +1,32 @@
 import {type ActionFunctionArgs, redirect, useLoaderData} from 'react-router'
-import {ControlsPhotos, ProjectListing} from '~/components/admin'
+import {ControlsPhotos, PhotoCollectionListing} from '~/components/admin'
 import {isUserAuthenticated} from '~/models/auth.server'
 import {
-  type Project,
-  archiveProject,
-  getProjects,
-  unarchiveProject,
-} from '~/models/projects.server'
+  type PhotoCollection,
+  deleteCollection,
+  getCollections,
+  setCollectionPublished,
+} from '~/models/photos.server'
 import {tryCatch} from '~/utils'
 
 export const loader = async () => {
-  const data = await tryCatch(getProjects())
+  const data = await tryCatch(getCollections())
 
   if (data.error) {
-    console.error('error retrieving projects:', data.error)
+    console.error('error retrieving photo collections:', data.error)
     return {error: data.error}
   }
 
   const grouped = {
-    projectsPublished: [] as Project[],
-    projectsDraft: [] as Project[],
-    projectsArchived: [] as Project[],
+    collectionsPublished: [] as PhotoCollection[],
+    collectionsDraft: [] as PhotoCollection[],
   }
 
-  for (const project of data.data) {
-    switch (project.status) {
-      case 'publish':
-        grouped.projectsPublished.push(project)
-        break
-      case 'draft':
-        grouped.projectsDraft.push(project)
-        break
-      case 'archive':
-        grouped.projectsArchived.push(project)
-        break
+  for (const collection of data.data) {
+    if (collection.is_published) {
+      grouped.collectionsPublished.push(collection)
+    } else {
+      grouped.collectionsDraft.push(collection)
     }
   }
 
@@ -49,47 +42,67 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
   const formData = await request.formData()
   const intent = formData.get('intent')
-  const projectId = formData.get('projectId') as string
+  const id = formData.get('id') as string
 
-  if (!projectId) return {error: 'project id required'}
+  if (!id) return {error: 'id required'}
 
   const performAction = async (
-    action: (args: {id: string}) => Promise<unknown>,
+    action: () => Promise<unknown>,
     label: string,
   ) => {
-    const result = await tryCatch(action({id: projectId}))
+    const result = await tryCatch(action())
 
     if (result.error) {
-      console.error(`error with ${label} project:`, result.error)
-      return {error: `error with ${label} project`}
+      console.error(`error with ${label} collection:`, result.error)
+      return {error: `error with ${label} collection`}
     }
 
     return {
-      success: `project ${label}`,
+      success: `collection ${label}`,
       result,
     }
   }
 
   switch (intent) {
-    case 'archive':
-      return await performAction(archiveProject, 'archiving')
+    case 'publish':
+      return await performAction(
+        () => setCollectionPublished({id, isPublished: true}),
+        'publishing',
+      )
 
-    case 'unarchive':
-      return await performAction(unarchiveProject, 'unarchiving')
+    case 'unpublish':
+      return await performAction(
+        () => setCollectionPublished({id, isPublished: false}),
+        'unpublishing',
+      )
+
+    case 'delete':
+      return await performAction(() => deleteCollection({id}), 'deleting')
 
     default:
       return {error: 'invalid intent'}
   }
 }
 
-const DashboardProjects = () => {
+const AdminPhotos = () => {
   const {data} = useLoaderData<typeof loader>()
 
   return (
     <>
       <ControlsPhotos />
+
+      {data && data.collectionsDraft.length > 0 && (
+        <PhotoCollectionListing title="draft" data={data.collectionsDraft} />
+      )}
+
+      {data && data.collectionsPublished.length > 0 && (
+        <PhotoCollectionListing
+          title="published"
+          data={data.collectionsPublished}
+        />
+      )}
     </>
   )
 }
 
-export default DashboardProjects
+export default AdminPhotos
