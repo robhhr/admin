@@ -16,10 +16,10 @@ export const ControlsPhotos = () => {
       </li>
       <li>
         <Button
-          disabled={location.pathname === '/admin/photos/new'}
-          to="/admin/photos/new"
+          disabled={location.pathname === '/admin/photos/create'}
+          to="/admin/photos/create"
         >
-          new photo
+          new collection
         </Button>
       </li>
     </ul>
