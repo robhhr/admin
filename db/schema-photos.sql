@@ -25,6 +25,7 @@ CREATE TABLE photos (
   caption          TEXT,
   sort_index INTEGER NOT NULL DEFAULT 0,
   is_published     BOOLEAN NOT NULL DEFAULT true,
+  favorites        INTEGER NOT NULL DEFAULT 0,
   taken_at         TIMESTAMPTZ,
   focal_length_mm  NUMERIC,
   aperture         NUMERIC,
