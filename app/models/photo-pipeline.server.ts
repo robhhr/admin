@@ -38,9 +38,24 @@ async function isJpeg(filePath: string) {
   }
 }
 
-// only these fields ever leave the file. geolocation never read.
+// exiftool is asked for these tags and nothing else, so gps, serial numbers
+// and maker notes are never parsed into this process at all. -fast (the
+// library default) skips trailing metadata, which matters on large raw files.
+const EXIF_TAGS = [
+  '-fast',
+  '-DateTimeOriginal',
+  '-CreateDate',
+  '-FocalLength',
+  '-FNumber',
+  '-ExposureTime',
+  '-ISO',
+  '-Model',
+  '-LensModel',
+  '-LensID',
+]
+
 async function readExif(filePath: string) {
-  const tags = await exiftool.read(filePath)
+  const tags = await exiftool.read(filePath, {readArgs: EXIF_TAGS})
 
   const takenAt = tags.DateTimeOriginal ?? tags.CreateDate
   const focalLength = parseFloat(String(tags.FocalLength ?? ''))
