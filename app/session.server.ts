@@ -33,7 +33,7 @@ export const sessionCookie = createCookie('_session', {
   maxAge: SESSION_MAX_AGE.standard,
   path: '/',
   sameSite: 'lax',
-  secrets: ['s3cret1'],
+  secrets: [sessionSecret],
   secure: process.env.NODE_ENV === 'production',
 })
 
